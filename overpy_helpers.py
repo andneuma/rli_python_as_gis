@@ -52,6 +52,7 @@ def fetch_osm(query):
 ## Dump results to XML
 # Todo
 # * Determine bbox in case of nodes == False
+# * testtest
 
 def dump(result, fp):
     """
