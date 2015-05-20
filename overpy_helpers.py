@@ -2,6 +2,13 @@ import overpy
 
 ## Generate Querys
 def generate_query(bbox=None, verbosity="body", **osm_elements):
+    """
+    :param bbox: Supply boundary box in OverpassAPI format
+    :param verbosity: Output format ("body", "skeleton", "ids_only", "meta")
+    :param osm_elements: dictionary of elements and associated tags
+    :return:
+    """
+
     def remove_whitespaces(str):
         return ''.join(str.split(' '))
 
@@ -27,6 +34,10 @@ def generate_query(bbox=None, verbosity="body", **osm_elements):
 
 ## Fetch data
 def fetch_osm(query):
+    """
+    :param query: Supply Overpass API query string (see https://wiki.openstreetmap.org/wiki/Overpass_API/Language_Guide)
+    :return:
+    """
     api = overpy.Overpass()
     result = api.query(query)
 
@@ -43,6 +54,11 @@ def fetch_osm(query):
 # * Determine bbox in case of nodes == False
 
 def dump(result, fp):
+    """
+    :param result: Overpy-object
+    :param fp: filepath-string
+    :return:
+    """
     # Write to supplied file object
     fp.write('<?xml version="1.0" encoding="UTF-8"?>\n')
     fp.write('<osm version="0.6" generator="OverPy {0}">\n'.format(overpy.__version__))
