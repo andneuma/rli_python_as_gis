@@ -1,0 +1,239 @@
+import sys
+import psycopg2
+import numpy as np
+from shapely.wkt import loads as wkt_loads
+
+
+def db_connection():
+    main_dt = {
+        'db': 'reiners_db',  # name of your database
+        'ip': '192.168.10.25',  # ip of the database or 'localhost'
+        'port': '5432',
+        'password': 'test123',
+        'user': 'Andi'}
+    return main_dt
+
+
+def map_definition(main_dt):
+    main_dt['wittenberg'] = {}
+
+    # Germany off-shore regions (ZNES)
+    main_dt['germany_point'] = {
+        'table': 'germany_point',  # name of the table
+        'geo_col': 'way',  # name of the geometry column
+        'id_col': 'osm_id',  # name of the geo-id column
+        'schema': 'public',  # name of the schema
+        'simp_tolerance': '0.01',  # simplification tolerance (1)
+        'where_col': 'osm_id',  # column for the where-condition
+        'where_cond': '> 110',  # condition for the where-condition
+        'facecolor': '#a5bfdd'  # color of the polygon (blue)
+    }
+    return main_dt
+
+
+def box_definition(main_dt):
+    main_dt['x1'] = 3.  # longitude, east
+    main_dt['x2'] = 16.  # longitude, east
+    main_dt['y1'] = 47.  # latitude, north
+    main_dt['y2'] = 56.  # latitude, north
+
+
+def execute_read_db(dic, db_string):
+    '''
+    Executes a sql-string and returns a tuple
+    '''
+    conn = psycopg2.connect(
+        '''host={ip} dbname={db} user={user} password={password}
+           port={port}
+        '''.format(**main_dt))
+    cur = conn.cursor()
+    cur.execute(db_string)
+    values = cur.fetchall()
+    cur.close()
+    conn.close()
+    return values
+
+
+def fetch_geometries(main_dt):
+    '''
+    Reads the geometry and the id of all given tables and
+    writes it to the 'geom'-key of each branch.
+    '''
+    sql_str = '''
+        SELECT {id_col}, ST_AsText(
+            ST_SIMPLIFY({geo_col},{simp_tolerance}))
+        FROM {schema}.{table}
+        WHERE "{where_col}" {where_cond}
+        ORDER BY {id_col} DESC;'''
+
+    for key in list(main_dt['germany_point'].keys()):
+        main_dt['germany_point'][key]['way'] = execute_read_db(
+            main_dt, sql_str.format(
+                **main_dt['geo_tables'][key]))
+
+
+def main():
+    main_dt = db_connection()
+    map_definition(main_dt)
+    box_definition(main_dt)
+    fetch_geometries(main_dt)
+    print(main_dt['germany_point']['de_offshore']['geom'][0])
+
+
+if __name__ == "__main__":
+    main()
+
+# ---
+import psycopg2
+import fiona
+from shapely.wkt import loads
+from shapely.geometry import MultiLineString, MultiPolygon, MultiPoint, mapping, \
+    Point, Polygon, LineString
+import pprint
+from tabulate import tabulate
+
+# Setup connection
+connection_rli = psycopg2.connect(
+    database="reiners_db",
+    user="Andi",
+    password="test123",
+    host="192.168.10.25",
+    port="5432")
+
+connection_local = psycopg2.connect(
+    database="osm",
+    user="postgres_andi",
+    host="localhost",
+    port="5432")
+
+connection = connection_local
+
+
+
+# Print connection status, if 0 then connection = open
+print connection.closed
+
+# Create cursor for querying, etc.
+cur = connection.cursor()
+cur_rli = connection_rli.cursor()
+
+## Fetch buildings using WKT representation of the geometry/geography without SRDI metadata
+# -> Power generators
+query1 = "SELECT osm_id, name, ST_AsText(ST_Transform(way,4326)) " \
+         "FROM brandenburg_point " \
+         "WHERE power='generator';"
+
+# -> Power Lines
+query2 = "SELECT osm_id, name, power, ST_AsText(ST_Transform(way,4326)) " \
+         "FROM brandenburg_line " \
+         "WHERE power='line' or power='minor_line';"
+schema = {'geometry': 'LineString',
+          'properties': {'osm_id': 'str',
+                         'name': 'str',
+                         'line type': 'str'}}
+
+query3 = "SELECT osm_id, name, power, ST_AsText(way,4326) " \
+         "FROM brandenburg_point " \
+         "WHERE power in ('generator','plant','converter');"
+schema = {'geometry': 'Point',
+          'properties': {'osm_id': 'str',
+                         'name': 'str',
+                         'power': 'str',
+                         'voltage': 'long'}}
+
+query4 = "SELECT osm_id, name, power, ST_AsText(ST_Transform(way,4326)) " \
+         "FROM brandenburg_line " \
+         "WHERE power=*;"
+
+query5 = "SELECT name, ST_AsText(geom) " \
+         "FROM deutschland.osm_adminareas;"
+
+cur.execute(query3)
+rows = cur.fetchall()
+rows
+connection.rollback()
+
+cur_rli.execute(query5)
+rows = cur_rli.fetchall()
+rows
+connection_rli.rollback()
+
+## Define Shape-file layout, geometry types:
+# Point
+# LineString
+# Polygon
+# MultiPoint
+# MultiLineString
+# MultiPolygon
+# GeometryCollection
+
+schema = {'geometry': 'Polygon', 'properties': {'osm_id': 'str', 'name': 'str'}}
+
+# Do some fancy GIS stuff
+# ...
+
+# Save results to disk
+with fiona.collection('/Users/blubber/Documents/TEMP/bb_power-lines.shp', 'w',
+                      'ESRI Shapefile', schema) as output:
+    for row in rows:
+        output.write({
+            'properties': {
+                'osm_id': str(row[0]),
+                'name': row[1],
+                'line type': row[2]
+            },
+            'geometry': mapping(loads(row[3]))
+        })
+
+# Print results
+
+# ------------------------------------------------------------------------------------
+
+# Define schema for saving results to hard drive as ESRI shape file (optional)
+schema = {'geometry': 'Point',
+          'properties': {'osm_id': 'str',
+                         'name': 'str',
+                         'power': 'str'}}
+
+
+# Generate query using supplied bounding box
+query6 = "SELECT osm_id, name, power, ST_AsText(ST_Transform(way,4326)) " \
+         "FROM brandenburg_point " \
+         "WHERE ST_AsText(ST_Transform(way,4326)) && ST_MakeEnvelope({xmin},{ymin},{xmax},{ymax}) ;".format(
+    **bbox)
+
+
+# Execute Code
+cur.execute(query7)
+connection.rollback()
+rows = cur.fetchall()
+rows
+
+## Collect results as dictionary and clip to target size
+# -> currently only tested for point objects
+coll = {}
+for row in rows:
+    geom = loads(row[3])
+    if geom.within(polygon):
+        coll[row[0]] = {
+            'name': row[1],
+            'power': row[2],
+            'geom': geom}
+
+
+# Save file to hard drive
+with fiona.collection(
+        '/Users/blubber/Documents/TEMP/wustermark_power-lines.shp', 'w',
+        'ESRI Shapefile', schema) as output:
+    for row in rows:
+        output.write({
+            'properties': {
+                'osm_id': str(row[0]),
+                'name': row[1]
+            },
+            'geometry': mapping(loads(row[3]))
+        })
+
+connection.rollback()
+
+sql_query = "SELECT ST_AsText(ST_Intersection('POINT(0 0)'::geometry, 'LINESTRING ( 0 0, 0 2 )'::geometry));"

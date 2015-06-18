@@ -1,0 +1,88 @@
+Running Doc - OSM / Python
+==========================
+
+PostGIS DB (setup and import)
+-----------------------------
+
+Requirements
++ PostgreSQL DB
++ osm2pgsql (current version to support pbf!)
++ lots of disk space (for planet.osm +500GB)
++ Regional or planet OSM-file
+=> formats supported by osm2pgsql: pbf (needs libprotobuf-c!), bz2, gz
+
+Create PostGIS DB, as DB-super-user do...
+* createdb [DB name] -O [postgres User]
+* psql -d [DB name] -c "CREATE EXTENSION postgis;"
+
+Download or generate style-file, defining table columns (from OSM-keys)
+* Default style file: https://github.com/openstreetmap/osm2pgsql/blob/master/default.style
+
+
+Import data using osm2pgsql
+---------------------------
+
+Import OSM-file into DB
+* osm2pgsql -[c/a] -s -p [prefix_string] -d [DB name] -U [postgres user] -H [DB server IP] -S [Import style file path] [OSM file path]
+
+=> --slim = Slim Mode (Without this mode, all temporary data is stored in RAM and if you do not have enough the import will not work  successfully)
+=> -c = Remove existing data from the database.
+=> -a = Add the OSM file into the database without removing existing data.
+=> -G = Normally osm2pgsql splits multi-part geometries into separate database rows per part. A single OSM id can therefore have several rows. With this  option,  PostgreSQL generates multi-geometry features in the PostgreSQL tables.
+=> -p = Prefix for table names (default: planet_osm).
+
+EXAMPLES:
+1. osm2pgsql -c -s -p "denmark" -d osm -U postgres_andi -H localhost -S ~/Documents/SoftwareDev\ Workspace/Python/Projects/rli_python_as_gis/OSM_PostGIS_import_RLI.style ./denmark-latest.osm.bz2
+=> Import latest denmark file into DB using "denmark" as prefix, dropping existing tabels inside DB, tested with vers. 0.87.0 (64bit id space)
+
+2. osm2pgsql -c -C 4000 -p "germany" -d osm -U postgres_andi -H localhost -S ~/Documents/SoftwareDev\ Workspace/Python/Projects/rli_python_as_gis/OSM_PostGIS_import_RLI.style ./germany-latest.osm.bz2
+=> Import Germany latest, notice bigger cache size, default (800) produces error, VERY SLOW
+
+3. osm2pgsql -c -d osm -U postgres_andi --cache 8000 --number-processes 4 --slim --flat-nodes germany_nodes.bin germany-latest.osm.pbf
+
+NOTICE: The import process is lossy, and controlled by a configuration file in which the keys of elements of interest are listed. The values of these "interesting" elements are imported as columns in the points, lines and polygons tables. (Alternatively, values of all tags can be imported into a "hstore" type column.) These tables can be very large, and care must be paid to get good indexed performance. If the set of "interesting" keys changes after the import and no hstore column has been used, then the import must be re-run.
+
+Data is being imported to public schema by default, use well defined prefixes!!!
+
+osm2pgsql -c -C 8000 -p "germany" -d reiners_db -U Andi -H 192.168.10.25 -W -S ./OSM_PostGIS_import_RLI.style ./germany-latest.osm.bz2
+
+* Layer Spatial Reference System: +proj=merc +a=6378137 +b=6378137 +lat_ts=0.0 +lon_0=0.0 +x_0=0.0 +y_0=0 +k=1.0 +units=m +nadgrids=@null +wktext +over +no_defs
+
+Querying DB
+-----------
+
+* Output formats for geometries
+
++ Nodes
+=> ST_AsGeoJSON: 	'{"type":"[Geometry]","coordinates":[Lat,Lon]}'
+=> ST_AsText:		'POINT(1104221.88 7769980.94)'
+=> ST_AsEWKB:		<read-only buffer for 0x103314e70, size 25, offset 0 at 0x1046d33f0>
+=> ST_AsEWKT:		'SRID=900913;POINT(1104221.88 7769980.94)'
+=> ST_AsLatLonText:	'79\xc2\xb03\'36.000"N 78\xc2\xb07\'12.000"W'
+
++ Lines
+=> ...
+
+* Example SELECT queries
+1. 'select osm_id, name, ST_AsText(way) from denmark_nodes where place='city';'
+=> Returns list of 3-tuples containing id, name and geometry object of tagged cities in denmark
+
+2. "SELECT ST_AsText(ST_Transform(way,4326)) " \
+            "FROM public.brandenburg_point " \
+            "WHERE ST_AsText(ST_Transform(way,4326)) && ST_GeomFromText('{poly}');"
+=> Returns all geometries (Points) within the boundary box of a given shape file (poly) 
+
+3. "SELECT osm_id, name, ST_AsText(ST_Transform(way,4326)) " \
+            "FROM public.brandenburg_point " \
+            "WHERE (ST_AsText(ST_Transform(way,4326)) && ST_MakeEnvelope({a},{b},{c},{d},{SRID})) " \
+            "AND name='KVZ A37';"
+=> Returns all geometries (Points) within a given boundary box
+
+Performing GIS-operations
+-------------------------
+
+1. Grab data from PostGIS database using psycopg2::
+=> Use common projection (e.g. 4326)
+2./3. Convert to Multi* (* = Point, Line, Polygon) or heterogenous collection 
+2./3. Perform GIS operations using shapely::
+4. Save to disk using fiona

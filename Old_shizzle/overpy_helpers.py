@@ -1,51 +1,21 @@
 import overpy
 
-## Generate Querys
-def generate_query(bbox=None, verbosity="body", **osm_elements):
-    """
-    :param bbox: Supply boundary box in OverpassAPI format
-    :param verbosity: Output format ("body", "skeleton", "ids_only", "meta")
-    :param osm_elements: dictionary of elements and associated tags
-    :return:
-    """
-
-    def remove_whitespaces(str):
-        return ''.join(str.split(' '))
-
-    # Initialize return query string
-    return_query = str("(")
-
-    if not osm_elements:
-        print "Invalid Input, please provide one or more osm element types to fetch (node, way, relation or map)"
-        return_query = None
-    else:
-        for key in osm_elements.keys():
-            return_query += str(key)
-            if osm_elements[key] and not osm_elements[key] == "[]":
-                return_query += str('[' + ']['.join(osm_elements[key]) + ']')
-            if bbox:
-                return_query += str('(' + bbox + ');')
-        return_query += ");"
-        # return_query += "out {verb};".format(verb=verbosity)
-        return_query += "out;"
-
-    return return_query
-
-
 ## Fetch data
 def fetch_osm(query):
     """
-    :param query: Supply Overpass API query string (see https://wiki.openstreetmap.org/wiki/Overpass_API/Language_Guide)
+    :param query: Supply Overpass API query string
+    (see https://wiki.openstreetmap.org/wiki/Overpass_API/Language_Guide)
     :return:
     """
     api = overpy.Overpass()
     result = api.query(query)
 
-    print "Fetched {nodes} nodes, {ways} ways and {rels} relations \n\nquery: '{query}'".format(nodes=len(result.nodes),
-                                                                                                ways=len(result.ways),
-                                                                                                rels=len(
-                                                                                                    result.relations),
-                                                                                                query=query)
+    print "Fetched {nodes} nodes, {ways} ways and {rels}" \
+          "relations \n\nquery: '{query}'".format(
+        nodes=len(result.nodes),
+        ways=len(result.ways),
+        rels=len(result.relations),
+        query=query)
     return result
 
 
@@ -61,7 +31,8 @@ def dump(result, fp):
     """
     # Write to supplied file object
     fp.write('<?xml version="1.0" encoding="UTF-8"?>\n')
-    fp.write('<osm version="0.6" generator="OverPy {0}">\n'.format(overpy.__version__))
+    fp.write('<osm version="0.6" generator="OverPy {0}">\n'.format(
+        overpy.__version__))
 
     # Determine bbox ?
     # Problem : No nodes, no bbox... FIX THIS
