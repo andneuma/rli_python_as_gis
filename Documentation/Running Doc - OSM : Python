@@ -78,11 +78,18 @@ Querying DB
             "AND name='KVZ A37';"
 => Returns all geometries (Points) within a given boundary box
 
-Performing GIS-operations
--------------------------
+Query DB from python
+--------------------
 
 1. Grab data from PostGIS database using psycopg2::
 => Use common projection (e.g. 4326)
 2./3. Convert to Multi* (* = Point, Line, Polygon) or heterogenous collection 
 2./3. Perform GIS operations using shapely::
 4. Save to disk using fiona
+
+Plotting results in python
+--------------------------
+
+* Make sure Basemap is available on your OS X system
+* if not: port install  py-matplotlib-basemap ('port' has to be installed...!)
+* 

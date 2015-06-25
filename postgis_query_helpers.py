@@ -5,6 +5,8 @@ import fiona
 from shapely.wkt import loads
 from shapely.geometry import mapping, Polygon
 import re
+import urllib2
+import xml.etree.ElementTree as ET
 
 ## --- CLASS DEFINITIONS
 
@@ -12,31 +14,63 @@ class DBOperations():
     """
     Class used to cleanly handle operations on PostGIS DB
     """
+
     def __enter__(self):
-        self.connection = psycopg2.connect(
-            database=self.db_setup['db'],
-            user=self.db_setup['user'],
-            host=self.db_setup['host'],
-            port=self.db_setup['port'])
-        self.cur = self.connection.cursor()
+        try:
+            self.connection = psycopg2.connect(
+                database=self.db_setup['db'],
+                user=self.db_setup['user'],
+                host=self.db_setup['host'],
+                port=self.db_setup['port'],
+                password=self.db_setup['password'])
+            self.cur = self.connection.cursor()
+        except psycopg2.DatabaseError as e:
+            print "Could not connect to Database: ", e
         return self
 
-    def __init__(self, db, host, user, password=None, port=5432):
+    def __init__(self, db, host, user, pwd_filepath=None, port=5432):
+        # Internal function for password finding
+        def find_password(fp):
+            try:
+                passwords = open(fp).read().split("\n")
+                for password in passwords:
+                    if not re.match(r'^#', password) and not password == '':
+                        split = re.split(r'@|:', password)
+                        u = split[0]
+                        h = split[1]
+                        passwd = split[2]
+
+                        if (host, user) == (h, u):
+                            if not passwd == "None":
+                                return passwd
+                    elif password == 'None':
+                        return None
+            except IOError as e:
+                print "Error accessing supplied password file: ", e
+                print "Trying to access DB '{db}' as user '{u}' " \
+                      "without password...".format(
+                    db=db, u=user)
+                # print "Password for {u}@{h} not found!".format(u=user, h=host)
+            return None
+
         self.db_setup = {
             'db': db,
             'host': host,
             'port': port,
-            'password': password,
+            'password': find_password(pwd_filepath),
             'user': user}
+
 
     def execute_query(self, query):
         try:
+            print "Querying DATABASE..."
             self.cur.execute(query)
             results = self.cur.fetchall()
+            print "...done!"
+            print "\n => Fetched {n} elements\n".format(n=len(results))
             return results
         except psycopg2.Error as e:
             print "ERROR during DB query: {e}".format(e=e.message)
-            print "lalala"
             self.connection.rollback()
 
     def __exit__(self, exc_type, exc_val, exc_tb):
@@ -44,9 +78,9 @@ class DBOperations():
         self.connection.close()
 
 
-## --- FUNCTIONS DEFINITIONS
+## --- FUNCTION DEFINITIONS
 
-def create_sql_query(main_dt, bbox=None):
+def create_where_query(main_dt, bbox=None):
     """
     Create SQL query from given query features
     :rtype : string
@@ -112,31 +146,34 @@ def fetch_geoms(main_dt,
     """
 
     def boundary_type(b):
+        """
+        :rtype : str
+        param b : boundary
+        """
         if type(b) == str:
-            if re.match("POLYGON\(\(", b):
-                return 'wkt_poly'
-            elif re.search("\.shp", b):
-                return 'shapefile'
-        elif type(b) == list and len(b) == 4:
-            # Todo
-            # * Maybe implement more precise format checking
-            return 'bbox'
-        else:
-            return None
+            # if re.match("POLYGON\(\(", b):
+            if b.startswith("POLYGON\(\("):
+                ret_type = 'wkt_poly'
+            elif b.endswith(".shp"):
+                ret_type = 'shapefile'
+        # elif type(b) == list and len(b) == 4:
+        elif type(b) == dict:
+            if set(b) == set(['xmin', 'ymin', 'xmax', 'ymax']):
+                ret_type = 'bbox'
+            else:
+                print "Wrong input format of bbox, returning NoneValue..."
+                ret_type = ''
+        return ret_type
 
     ## Define query boundary depending on input type (None, bbox, WKT-defined Polygon or shapefile)
-    if boundary_type(boundary) == None:
-        # Set bbox to None if none supplied
-        bbox = None
-        polygon = None
-        sql_query = create_sql_query(main_dt, bbox=None)
-    elif boundary_type(boundary) == 'bbox':
+    bbox = None
+    polygon = None
+    if boundary_type(boundary) == 'bbox':
         # Set bbox according to self-defined values
         bbox = {'xmin': boundary[0], 'ymin': boundary[1],
                 'xmax': boundary[2], 'ymax': boundary[3],
                 'SRID': main_dt['query_features']['SRID']}
         polygon = None
-        sql_query = create_sql_query(main_dt, bbox)
     elif boundary_type(boundary) == 'wkt':
         # import as shapely polygon
         polygon = loads(boundary)
@@ -151,13 +188,14 @@ def fetch_geoms(main_dt,
             bbox = {'xmin': source.bounds[0], 'ymin': source.bounds[1],
                     'xmax': source.bounds[2], 'ymax': source.bounds[3],
                     'SRID': main_dt['query_features']['SRID']}
-            sql_query = create_sql_query(main_dt, bbox)
     else:
         print "Wrong input for clipping boundary. " \
               "Supply valid boundary style (shapefile, bbox or wkt-polygon) " \
               "or set to None"
         return None
 
+    # Create SQL query
+    sql_query = create_where_query(main_dt, bbox)
 
     ## Fetch features from PostGIS DB as specified in main_dt
     with DBOperations(**main_dt['db_setup']) as conn:
@@ -177,18 +215,15 @@ def fetch_geoms(main_dt,
             [t.add_row(row[0:-1]) for row in view[1:1000]]
             print t
             print "(List truncated)"
-    print "Fetched {n} elements\n".format(n=len(view))
 
     ## Transform results ('view') to list of dictionaries
-    view_as_dict = []
+    view_as_dict = {'bbox': bbox, 'results': []}
     for row in view:
-        dict = {}
-        dict['properties'] = {}
+        dictionary = {'properties': {}}
         for i, tag in enumerate(main_dt['query_features']['select_cols']):
-            dict['properties'][tag] = row[i]
-        dict['geom'] = row[-1]
-
-        view_as_dict.append(dict)
+            dictionary['properties'][tag] = row[i]
+        dictionary['geom'] = row[-1]
+        view_as_dict['results'].append(dictionary)
 
     return view_as_dict
 
@@ -211,16 +246,17 @@ def view2shp(view, filepath):
         schema['geometry'] = loads(view[0]['geom']).type
         schema['properties'] = {}
         # Initially set every type to NoneValue
-        for key in view[0]['properties'].keys():
+        for key in view[0]['properties']:
             schema['properties'][key] = None
         # Go through result rows and if type!=None set type(value) as schema type
         for r in view:
-            for key in r['properties'].keys():
+            for key in r['properties']:
                 if r['properties'][key]:
-                    t = type(r['properties'][key]).__name__
-                    schema['properties'][key] = t
+                    schema['properties'][key] = type(
+                        r['properties'][key]).__name__
                 else:
                     schema['properties'][key] = 'str'
+
         return schema
 
     # Save result to disk using fiona-package
@@ -237,3 +273,35 @@ def view2shp(view, filepath):
         print "Saved file to {fp}".format(fp=filepath)
     else:
         print "Nothing to save - empty view!"
+
+
+def fetch_admin_from_latlon(lat, lon):
+    """
+    Receive reverse geocoded information from lat/lon point
+    :rtype : dict
+    :param lat: latitude
+    :param lon: longitude
+    :param zoom: detail level of information
+    :return: dictionary
+    """
+    def parse_result(res):
+        root = ET.fromstring(res)
+        address_parts = {}
+
+        for a in root[1]:
+            address_parts[a.tag] = a.text
+
+        return address_parts
+
+    query = "http://nominatim.openstreetmap.org/reverse?"
+    query += "format=xml"
+    query += "&lat={lat}".format(lat=lat)
+    query += "&lon={lon}".format(lon=lon)
+    query += "&zoom=18"
+    query += "&addressdetails=1"
+
+    conn = urllib2.urlopen(query)
+    rev_geocode = conn.read()
+    address_parts = parse_result(rev_geocode)
+
+    return address_parts
