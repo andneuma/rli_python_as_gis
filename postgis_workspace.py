@@ -1,38 +1,1 @@
-from postgis_query_helpers import *
-
-## Example query using python PostGIS socket
-
-main_dt = {}
-main_dt['db_setup'] = {
-    'db': "reiners_db",
-    'host': '192.168.10.25',
-    'port': 5432,
-    'user': 'Andi',
-    'pwd_filepath': '/Users/blubber/.db_connections.config'}
-
-# main_dt['db_setup'] = {
-# 'db': "osm",
-# 'host': 'localhost',
-# 'port': 5432,
-#     'user': 'postgres_andi',
-#     'pwd_filepath': '/Users/blubber/.db_connections.config'}
-
-main_dt['query_features'] = {'schema': 'public',
-                             'table': 'germany_polygon',
-                             'geom_type': 'Polygon',
-                             'geom_col': 'way',
-                             'id_col': 'osm_id',
-                             'select_cols': ['osm_id', 'name', 'amenity'],
-                             'where_cond': "amenity='kindergarten'",
-                             'SRID': 4326}
-
-# Fetch geometries
-result = fetch_geoms(main_dt,
-                     boundary='/Users/blubber/Documents/TEMP/wustermark_extend.shp',
-                     summary_table=True)
-
-
-# Fetch admin boundary from lat/lon
-res = fetch_admin_from_latlon(lat=51., lon=12.12)
-for e in res:
-    print e, ":", res[e]
+from PostGISHelpers import *from WebOSM import *database = {'db': "osm",            'host': 'localhost',            'port': 5432,            'user': 'postgres_andi'}# database = {'db': "reiners_db",#             'host': '192.168.10.25',#             'port': 5432,#             'user': 'Andi'}query_features = {'schema': 'public',                  'relation': 'brandenburg_polygon',                  'geom_type': 'Polygon',                  'geom_col': 'way',                  'id_col': 'osm_id',                  'select_cols': ['osm_id', 'amenity'],                  'where_cond': "building is not NULL",                  'SRID': 4326}q = Query(name='buildings Wittenberg')# q.create_where_query(features=query_features,#                      boundary='/Users/blubber/Documents/TEMP/wustermark_extend.shp')# q.create_where_query(features=query_features,#                      boundary=(#                          12.871817013021891,#                          52.50091209200498,#                          13.018814242671711,#                          52.578008093778124))q.create_where_query(features=query_features,                     boundary="public.germany_line")q.fetch_geoms(source_db=database)q.print_results()q.export2shp('/Users/blubber/Documents/TEMP/blubb.shp')fetch_admin_from_latlon(51, 12)

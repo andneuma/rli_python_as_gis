@@ -24,6 +24,11 @@
     <show-object-properties value="true" />
     <loaded-nodes />
   </component>
+  <component name="DBNavigator.Project.DatabaseConsoleManager">
+    <connection id="454c63bc-c03d-4894-99ee-c1d4292568f2">
+      <console name="testdb" type="STANDARD" />
+    </connection>
+  </component>
   <component name="DBNavigator.Project.MethodExecutionManager">
     <method-browser />
     <execution-history>
@@ -34,6 +39,10 @@
   </component>
   <component name="DBNavigator.Project.ObjectDependencyManager">
     <last-used-dependency-type value="INCOMING" />
+  </component>
+  <component name="DBNavigator.Project.ObjectQuickFilterManager">
+    <last-used-operator value="EQUAL" />
+    <filters />
   </component>
   <component name="DBNavigator.Project.ScriptExecutionManager" clear-outputs="true">
     <recently-used-interfaces />
@@ -63,10 +72,13 @@
         </properties>
         <ssh-settings>
           <active value="false" />
-          <host value="" />
-          <port value="22" />
-          <user value="" />
-          <password value="" />
+          <proxy-host value="" />
+          <proxy-port value="22" />
+          <proxy-user value="" />
+          <proxy-password value="" />
+          <auth-type value="PASSWORD" />
+          <key-file value="" />
+          <key-passphrase value="" />
         </ssh-settings>
         <details>
           <charset value="UTF-8" />
@@ -109,9 +121,6 @@
           </object-type-filter>
           <object-name-filters />
         </object-filters>
-        <consoles>
-          <console name="testdb" />
-        </consoles>
       </connection>
     </connections>
     <browser-settings>
@@ -223,6 +232,7 @@
         <convert-empty-strings-to-null value="true" />
         <select-content-on-cell-edit value="true" />
         <large-value-preview-active value="true" />
+        <load-view-data-active value="false" />
       </general>
       <filters>
         <prompt-filter-dialog value="true" />
@@ -413,16 +423,17 @@
       <statement-execution>
         <fetch-block-size value="100" />
         <execution-timeout value="20" />
+        <debug-execution-timeout value="600" />
         <focus-result value="false" />
       </statement-execution>
       <script-execution>
         <command-line-interfaces />
       </script-execution>
-      <statement-execution>
-        <execution-timeout value="20" />
+      <method-execution>
+        <execution-timeout value="30" />
         <debug-execution-timeout value="600" />
         <parameter-history-size value="10" />
-      </statement-execution>
+      </method-execution>
     </execution-engine-settings>
     <operation-settings>
       <transactions>

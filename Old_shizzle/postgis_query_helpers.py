@@ -1,82 +1,15 @@
-## Functions to
+# from mpl_toolkits.basemap import Basemap
 from prettytable import PrettyTable
-import psycopg2
-import fiona
-from shapely.wkt import loads
-from shapely.geometry import mapping, Polygon
-import re
-import urllib2
-import xml.etree.ElementTree as ET
+import matplotlib.pyplot as plt
+from matplotlib.collections import LineCollection
+import numpy as np
+import fiona  # handling ESRI shape format
+import urllib  # Python 3 issues?
+import xml.etree.ElementTree as ET  # XML-parsing
+from shapely.wkt import loads as loads
+from shapely.geometry import mapping, Polygon, shape
 
-## --- CLASS DEFINITIONS
-
-class DBOperations():
-    """
-    Class used to cleanly handle operations on PostGIS DB
-    """
-
-    def __enter__(self):
-        try:
-            self.connection = psycopg2.connect(
-                database=self.db_setup['db'],
-                user=self.db_setup['user'],
-                host=self.db_setup['host'],
-                port=self.db_setup['port'],
-                password=self.db_setup['password'])
-            self.cur = self.connection.cursor()
-        except psycopg2.DatabaseError as e:
-            print "Could not connect to Database: ", e
-        return self
-
-    def __init__(self, db, host, user, pwd_filepath=None, port=5432):
-        # Internal function for password finding
-        def find_password(fp):
-            try:
-                passwords = open(fp).read().split("\n")
-                for password in passwords:
-                    if not re.match(r'^#', password) and not password == '':
-                        split = re.split(r'@|:', password)
-                        u = split[0]
-                        h = split[1]
-                        passwd = split[2]
-
-                        if (host, user) == (h, u):
-                            if not passwd == "None":
-                                return passwd
-                    elif password == 'None':
-                        return None
-            except IOError as e:
-                print "Error accessing supplied password file: ", e
-                print "Trying to access DB '{db}' as user '{u}' " \
-                      "without password...".format(
-                    db=db, u=user)
-                # print "Password for {u}@{h} not found!".format(u=user, h=host)
-            return None
-
-        self.db_setup = {
-            'db': db,
-            'host': host,
-            'port': port,
-            'password': find_password(pwd_filepath),
-            'user': user}
-
-
-    def execute_query(self, query):
-        try:
-            print "Querying DATABASE..."
-            self.cur.execute(query)
-            results = self.cur.fetchall()
-            print "...done!"
-            print "\n => Fetched {n} elements\n".format(n=len(results))
-            return results
-        except psycopg2.Error as e:
-            print "ERROR during DB query: {e}".format(e=e.message)
-            self.connection.rollback()
-
-    def __exit__(self, exc_type, exc_val, exc_tb):
-        self.cur.close()
-        self.connection.close()
-
+from SQLOperations import *
 
 ## --- FUNCTION DEFINITIONS
 
@@ -117,7 +50,7 @@ def create_where_query(main_dt, bbox=None):
     return sql_query
 
 
-def clip2poly(view, poly):
+def clip_view2poly(view, poly):
     """
     Clips list of n-tuples as result of SELECT-query to boundary of a given shapely polygon object
     :rtype : list
@@ -125,12 +58,17 @@ def clip2poly(view, poly):
     :param poly: shapely polygon object
     :return: list of n-tuples within polygon
     """
+    # Todo
+    # -> Type check oder duck type
+    # -> Check if this is 'real' clipping... => IT IS NOT!!!
+    # -> ...worse: [].intersection(...) does not work, 'Assertion failed'-error
     coll = []
     for row in view:
         geom = loads(row[-1])
         if geom.within(poly):
             coll.append(row)
-    return coll
+        # row[-1] = poly.intersection(geom)
+    return view
 
 
 def fetch_geoms(main_dt,
@@ -156,18 +94,20 @@ def fetch_geoms(main_dt,
                 ret_type = 'wkt_poly'
             elif b.endswith(".shp"):
                 ret_type = 'shapefile'
-        # elif type(b) == list and len(b) == 4:
         elif type(b) == dict:
             if set(b) == set(['xmin', 'ymin', 'xmax', 'ymax']):
                 ret_type = 'bbox'
             else:
-                print "Wrong input format of bbox, returning NoneValue..."
+                print("Wrong input format of bbox, returning NoneValue...")
                 ret_type = ''
+        else:
+            ret_type = ''
         return ret_type
 
     ## Define query boundary depending on input type (None, bbox, WKT-defined Polygon or shapefile)
     bbox = None
     polygon = None
+
     if boundary_type(boundary) == 'bbox':
         # Set bbox according to self-defined values
         bbox = {'xmin': boundary[0], 'ymin': boundary[1],
@@ -189,10 +129,8 @@ def fetch_geoms(main_dt,
                     'xmax': source.bounds[2], 'ymax': source.bounds[3],
                     'SRID': main_dt['query_features']['SRID']}
     else:
-        print "Wrong input for clipping boundary. " \
-              "Supply valid boundary style (shapefile, bbox or wkt-polygon) " \
-              "or set to None"
-        return None
+        print("No input for clipping boundary. Setting to None... ")
+        bbox = None
 
     # Create SQL query
     sql_query = create_where_query(main_dt, bbox)
@@ -201,23 +139,28 @@ def fetch_geoms(main_dt,
     with DBOperations(**main_dt['db_setup']) as conn:
         view = conn.execute_query(sql_query)
 
-    ## Clip features to polygon - if supplied
+        ## Clip features to polygon - if supplied
     if polygon:
-        view = clip2poly(view, polygon)
+        view = clip_view2poly(view, polygon)
 
     ## Print fetched results using PrettyTable(optional)
     if summary_table:
         t = PrettyTable(main_dt['query_features']['select_cols'])
         if len(view) <= 1000:
             [t.add_row(row[0:-1]) for row in view]
-            print t
+            print(t)
         else:
             [t.add_row(row[0:-1]) for row in view[1:1000]]
-            print t
-            print "(List truncated)"
+            print(t)
+            print("(List truncated)")
+
+    # Print number of fetched elements
+    print("\n => Fetched {n} elements\n".format(n=len(view)))
 
     ## Transform results ('view') to list of dictionaries
-    view_as_dict = {'bbox': bbox, 'results': []}
+    view_as_dict = {'bbox': bbox,
+                    'geom_type': main_dt['query_features']['geom_type'],
+                    'results': []}
     for row in view:
         dictionary = {'properties': {}}
         for i, tag in enumerate(main_dt['query_features']['select_cols']):
@@ -226,6 +169,134 @@ def fetch_geoms(main_dt,
         view_as_dict['results'].append(dictionary)
 
     return view_as_dict
+
+def shp2shapely(filepath):
+    """
+    Read local shapefile and convert to shapely object for easy processing
+    :param filepath: Path to Shapefile
+    :return: Shapely object
+    """
+    # Todo
+    # -> Should have same structure as view...?
+    with fiona.open(filepath) as shp:
+        shape(shp[0]['geometry'])
+
+
+
+## Helper function for plotting the results
+def get_vectors_from_postgis_map(bm, geom):
+    """
+    Create vector collection from given shapely geometries
+    :rtype : list
+    :param bm: Basemap() object
+    :param geom: shapely geometry object
+    :return:
+    """
+    vectors = []
+    # Try handling input as Point, Polygon, Linestring, ...
+    try:
+        for el in geom:
+            try:
+                coords = list(el.coords)
+            except NotImplementedError:
+                coords = list(list(el.exterior.coords))
+
+            seg = []
+            for coord in coords:
+                seg.append(bm(coord[0], coord[1]))
+            vectors.append(np.asarray(seg))
+    # If TypeError try accessing structure of Multi*-objects (MultiPolygon, ...)
+    except TypeError:
+        seg = []
+        try:
+            coords = list(geom.coords)
+        except NotImplementedError:
+            coords = list(geom.exterior.coords)
+
+        for coord in coords:
+            seg.append(bm(coord[0], coord[1]))
+        vectors.append(np.asarray(seg))
+    return vectors
+
+
+def bbox_of_view(view):
+    """
+    :rtype : dict
+    :param view: return dict of fetch_geoms(...)
+    :return: bbox dict {'xmin':float, 'xmax':float, ...}
+    """
+    try:
+        # Define initial values for view's bbox
+        geom_shapely = loads(view['results'][0]['geom'])
+        geom_bounds = geom_shapely.bounds
+        bbox = {'xmin': geom_bounds[0],
+                'ymin': geom_bounds[1],
+                'xmax': geom_bounds[2],
+                'ymax': geom_bounds[3]}
+    except:
+        print("Error: Empty view!")
+        return None
+
+    # Todo
+    # -> This part of code definately needs improvement...
+    for result in view['results']:
+        geom_shapely = loads(result['geom'])
+        try:
+            if min(geom_shapely.xy[0]) < bbox['xmin']:
+                bbox['xmin'] = min(geom_shapely.xy[0])
+            if min(geom_shapely.xy[1]) < bbox['ymin']:
+                bbox['ymin'] = min(geom_shapely.xy[1])
+            if max(geom_shapely.xy[0]) > bbox['xmax']:
+                bbox['xmax'] = max(geom_shapely.xy[0])
+            if max(geom_shapely.xy[1]) > bbox['ymax']:
+                bbox['ymax'] = max(geom_shapely.xy[1])
+        # Catch exception if type=Polygon
+        except NotImplementedError:
+            if min(geom_shapely.exterior.xy[0]) < bbox['xmin']:
+                bbox['xmin'] = min(geom_shapely.exterior.xy[0])
+            if min(geom_shapely.exterior.xy[1]) < bbox['ymin']:
+                bbox['ymin'] = min(geom_shapely.exterior.xy[1])
+            if max(geom_shapely.exterior.xy[0]) > bbox['xmax']:
+                bbox['xmax'] = max(geom_shapely.exterior.xy[0])
+            if max(geom_shapely.exterior.xy[1]) > bbox['ymax']:
+                bbox['ymax'] = max(geom_shapely.exterior.xy[1])
+    return bbox
+
+
+def plot_view(result):
+    # Determine bounding box if no clipping boundary was supplied
+    if not result['bbox']:
+        result['bbox'] = bbox_of_view(result)
+
+    ax = plt.subplot(111)
+    # plt.box(on=None)
+    m = Basemap(resolution='i',
+                projection='merc',
+                llcrnrlat=result['bbox']['ymin'],
+                urcrnrlat=result['bbox']['ymax'],
+                llcrnrlon=result['bbox']['xmin'],
+                urcrnrlon=result['bbox']['xmax'],
+                lat_ts=(result['bbox']['xmin'] +
+                        result['bbox']['xmax']) / 2)
+    m.drawcoastlines()
+
+    try:
+        for el in result['results']:
+            vectors = get_vectors_from_postgis_map(m, loads(el['geom']))
+            lines = LineCollection(vectors, antialiaseds=(1, ))
+            lines.set_facecolors('black')
+            lines.set_edgecolors('white')
+            lines.set_linewidth(1)
+            ax.add_collection(lines)
+        m.fillcontinents(color='coral', lake_color='aqua')
+    # If AttributeError assume geom_type 'Point', simply collect all
+    # points and perform scatterplot
+    except AttributeError:
+        xy = m([loads(point['geom']).x for point in result['results']],
+               [loads(point['geom']).y for point in result['results']])
+        plt.scatter(xy[0], xy[1])
+
+    plt.show()
 
 
 def view2shp(view, filepath):
@@ -243,13 +314,13 @@ def view2shp(view, filepath):
         :return: Dictionary in ESRI shape format style
         """
         schema = {}
-        schema['geometry'] = loads(view[0]['geom']).type
+        schema['geometry'] = loads(view['results'][0]['geom']).type
         schema['properties'] = {}
         # Initially set every type to NoneValue
-        for key in view[0]['properties']:
+        for key in view['results'][0]['properties']:
             schema['properties'][key] = None
         # Go through result rows and if type!=None set type(value) as schema type
-        for r in view:
+        for r in view['results']:
             for key in r['properties']:
                 if r['properties'][key]:
                     schema['properties'][key] = type(
@@ -265,14 +336,14 @@ def view2shp(view, filepath):
         schema = ESRI_schema_from_view()
         with fiona.collection(filepath, 'w',
                               'ESRI Shapefile', schema) as output:
-            for row in view:
+            for row in view['results']:
                 output.write({
                     'properties': row['properties'],
                     'geometry': mapping(loads(row['geom']))
                 })
-        print "Saved file to {fp}".format(fp=filepath)
+        print("Saved file to {fp}".format(fp=filepath))
     else:
-        print "Nothing to save - empty view!"
+        print("Nothing to save - empty view!")
 
 
 def fetch_admin_from_latlon(lat, lon):
@@ -284,6 +355,7 @@ def fetch_admin_from_latlon(lat, lon):
     :param zoom: detail level of information
     :return: dictionary
     """
+
     def parse_result(res):
         root = ET.fromstring(res)
         address_parts = {}
@@ -300,7 +372,7 @@ def fetch_admin_from_latlon(lat, lon):
     query += "&zoom=18"
     query += "&addressdetails=1"
 
-    conn = urllib2.urlopen(query)
+    conn = urllib.request.urlopen(query)
     rev_geocode = conn.read()
     address_parts = parse_result(rev_geocode)
 
