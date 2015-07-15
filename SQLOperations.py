@@ -18,7 +18,7 @@ class DBOperations():
             print("Could not connect to Database: ", e)
         return self
 
-    def __init__(self, db, host, user, pwd_filepath=None, port=5432):
+    def __init__(self, db, host, user, port=5432):
         self.db_setup = {
             'db': db,
             'host': host,
@@ -30,8 +30,10 @@ class DBOperations():
         try:
             print("Querying DATABASE...(may take a few minutes!)")
             ts = datetime.datetime.now()
+
             self.cur.execute(query)
             results = self.cur.fetchall()
+
             td = datetime.datetime.now() - ts
 
             sec = int(td.seconds % 60)

@@ -11,16 +11,18 @@ import re
 from SQLOperations import *
 
 
-class Query:
-    instances = {}
+class Region:
+    """
+    Define region object, instances can be passed to Query() in order to set
+    boundaries
+    """
 
-    def __init__(self, name):
-        self.query_name = name
-        self.__class__.instances[self.query_name] = weakref.proxy(self)
-        self.results = []
-        self.geom_type = None
+    def __init__(self, name=None, boundary=None):
+        self.name = name
         self.bounds = None
         self.boundary_polygon = None
+
+        self.set_boundaries(boundary)
 
     def set_boundaries(self, boundary):
         """
@@ -32,6 +34,7 @@ class Query:
             if boundary.startswith("POLYGON\(\("):
                 self.boundary_polygon = loads(boundary)
                 self.bounds = self.boundary_polygon.bounds
+                self.boundary_polygon = self.boundary_polygon.wkt
             # Filepath to ESRI shape file
             elif boundary.endswith(".shp"):
                 with fiona.open(boundary, 'r') as source:
@@ -39,6 +42,7 @@ class Query:
                     self.boundary_polygon = Polygon(
                         next(source)['geometry']['coordinates'][0])
                 self.bounds = self.boundary_polygon.bounds
+                self.boundary_polygon = self.boundary_polygon.wkt
             # Link to database table containing boundary polygon
             # format: [schema].[table]
             elif re.match(r"[a-zA-Z0-9]*[.]*[a-zA-Z0-9]", boundary):
@@ -53,25 +57,82 @@ class Query:
         elif type(boundary) == tuple:
             self.bounds = boundary
             self.boundary_polygon = box(*boundary)
+            self.boundary_polygon = self.boundary_polygon.wkt
         else:
             print(
                 "Warning: Wrong or unknown input format of boundary, returning NoneValue...")
             self.bounds = None
             self.boundary_polygon = None
 
-    def create_where_query(self, features, boundary=None):
-        # Todo
-        # Henner fragen, ob das so cool ist (String Concatination und SQL)
-        # --> SQL-Injections possbible? Was sind die Szenarien?
+
+class Query:
+    instances = {}
+
+    def __init__(self, name=None, region=Region()):
+        self.query_name = name
+        self.__class__.instances[self.query_name] = weakref.proxy(self)
+        self.results = []
+        self.geom_type = None
+
+        self.bounds = region.bounds
+        self.boundary_polygon = region.boundary_polygon
+
+    def prepare_where_query_experimental(self, features):
         """
         Create SQL query from given query features
         :rtype : string
-        :param main_dt: "map" file
-        :param bbox: boundary box
+        :param region: instance of Region() defining query boundaries
+        :param features: dictionary defining basic query features
         :return: sql query
         """
-        # Set query boundaries - if any
-        self.set_boundaries(boundary)
+
+        self.geom_type = features['geom_type']
+        self.SRID = features['SRID']
+        self.select_cols = features['select_cols']
+        self.__query_features = features
+
+        if self.bounds:
+            self.__query_features['xmin'], self.__query_features['ymin'], \
+            self.__query_features['xmax'], self.__query_features['ymax'] = self.bounds
+        else:
+            self.__query_features['xmin'] = None
+            self.__query_features['ymin'] = None
+            self.__query_features['xmax'] = None
+            self.__query_features['ymax'] = None
+
+        # SELECT...
+        self.sql_query = "SELECT %(select_cols)s, ST_AsText(ST_Transform(%(geom_col)s,%(SRID)s))"
+
+        # FROM/WHERE...
+        # bbox of format (xmin, ymin, xmax, ymax)
+        if type(self.bounds) == tuple:
+            # FROM...
+            self.sql_query += " FROM %(schema)s.%(relation)s"
+            if features['where_cond']:
+                self.sql_query += " WHERE %(where_cond)s AND"
+            self.sql_query += " ST_AsText(ST_Transform(%(geom_col)s,%(SRID)s)) "
+            self.sql_query += "&& ST_MakeEnvelope(%(xmin)s,(%(ymin)s,(%(xmax)s,(%(ymax)s"
+        # Link to DB relation
+        elif type(self.bounds) == str:
+            # FROM...
+            self.sql_query += " FROM %(schema)s.%(relation)s, %(clip_relation)s as clip_relation"
+            if features['where_cond']:
+                self.sql_query += " WHERE %(where_cond)s AND"
+            self.sql_query += " ST_Contains(clip_relation.geom, ST_Transform(way,%(SRID)s))"
+        # No clipping boundary
+        else:
+            if features['where_cond']:
+                self.sql_query += " WHERE %(where_cond)s"
+
+    def create_where_query(self, features):
+        # INSECURE => SQL-INJECTIONS possible!
+        """
+        Create SQL query from given query features
+        :rtype : string
+        :param region: instance of Region() defining query boundaries
+        :param features: dictionary defining basic query features
+        :return: sql query
+        """
 
         # SELECT...
         self.sql_query = "SELECT {sel_cols}, ST_AsText(ST_Transform({geom},{SRID}))".format(
@@ -85,7 +146,7 @@ class Query:
             # FROM...
             self.sql_query += " FROM {schema}.{relation}".format(
                 schema=features['schema'],
-                table=features['relation'])
+                relation=features['relation'])
             if features['where_cond']:
                 self.sql_query += " WHERE {where_cond} AND".format(
                     where_cond=features['where_cond'])
@@ -106,7 +167,7 @@ class Query:
                     where_cond=features['where_cond'])
             self.sql_query += " ST_Contains(clip_relation.geom, ST_Transform(way,{SRID}))".format(
                 SRID=features['SRID'])
-        # No clip boundary
+        # No clipping boundary
         else:
             if features['where_cond']:
                 self.sql_query += " WHERE {where_cond}".format(
@@ -116,12 +177,6 @@ class Query:
         self.SRID = features['SRID']
         self.select_cols = features['select_cols']
 
-    def create_buildings_query(self):
-        pass
-
-    def create_powersystem_query(self):
-        pass
-
     def clip_view2poly(self):
         """
         Clips list of n-tuples as result of SELECT-query to boundary of a given shapely polygon object
@@ -130,7 +185,7 @@ class Query:
         :param poly: shapely polygon object
         :return: list of n-tuples within polygon
         """
-        
+
         # Todo
         # -> Type check oder duck type
         # -> Check if this is 'real' clipping... => IT IS NOT!!!
@@ -140,7 +195,7 @@ class Query:
             coll = []
             for row in self.results:
                 geom = loads(row['geom'])
-                if geom.within(self.boundary_polygon):
+                if geom.within(loads(self.boundary_polygon)):
                     coll.append(row)
             self.results = coll
 
@@ -155,6 +210,8 @@ class Query:
 
         # Fetch features from PostGIS DB
         with DBOperations(**source_db) as conn:
+            # view = conn.execute_query(query=self.sql_query,
+            #                           params=self.__query_features)
             view = conn.execute_query(self.sql_query)
 
         # Transform results ('view') to list of dictionaries
