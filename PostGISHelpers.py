@@ -6,63 +6,9 @@ import numpy as np
 import fiona  # handling ESRI shape format
 from shapely.wkt import loads as loads
 from shapely.geometry import mapping, Polygon, box
-import weakref
-import re
+
 from SQLOperations import *
-
-
-class Region:
-    """
-    Define region object, instances can be passed to Query() in order to set
-    boundaries
-    """
-
-    def __init__(self, name=None, boundary=None):
-        self.name = name
-        self.bounds = None
-        self.boundary_polygon = None
-
-        self.set_boundaries(boundary)
-
-    def set_boundaries(self, boundary):
-        """
-        Set boundary bbox
-        :return:
-        """
-        if type(boundary) == str:
-            # WKT-String formatted polygon
-            if boundary.startswith("POLYGON\(\("):
-                self.boundary_polygon = loads(boundary)
-                self.bounds = self.boundary_polygon.bounds
-                self.boundary_polygon = self.boundary_polygon.wkt
-            # Filepath to ESRI shape file
-            elif boundary.endswith(".shp"):
-                with fiona.open(boundary, 'r') as source:
-                    # import as shapely polygon
-                    self.boundary_polygon = Polygon(
-                        next(source)['geometry']['coordinates'][0])
-                self.bounds = self.boundary_polygon.bounds
-                self.boundary_polygon = self.boundary_polygon.wkt
-            # Link to database table containing boundary polygon
-            # format: [schema].[table]
-            elif re.match(r"[a-zA-Z0-9]*[.]*[a-zA-Z0-9]", boundary):
-                self.bounds = boundary
-                self.boundary_polygon = None
-            else:
-                print(
-                    "Warning: Wrong or unknown input format of boundary, returning NoneValue...")
-                self.bounds = None
-                self.boundary_polygon = None
-        # tuple containing bbox, format: (xmin, ymin, xmax, ymax)
-        elif type(boundary) == tuple:
-            self.bounds = boundary
-            self.boundary_polygon = box(*boundary)
-            self.boundary_polygon = self.boundary_polygon.wkt
-        else:
-            print(
-                "Warning: Wrong or unknown input format of boundary, returning NoneValue...")
-            self.bounds = None
-            self.boundary_polygon = None
+from region import *
 
 
 class Query:
@@ -73,6 +19,7 @@ class Query:
         self.__class__.instances[self.query_name] = weakref.proxy(self)
         self.results = []
         self.geom_type = None
+        self.sql_query = None
 
         self.bounds = region.bounds
         self.boundary_polygon = region.boundary_polygon
@@ -93,7 +40,8 @@ class Query:
 
         if self.bounds:
             self.__query_features['xmin'], self.__query_features['ymin'], \
-            self.__query_features['xmax'], self.__query_features['ymax'] = self.bounds
+            self.__query_features['xmax'], self.__query_features[
+                'ymax'] = self.bounds
         else:
             self.__query_features['xmin'] = None
             self.__query_features['ymin'] = None
@@ -101,28 +49,28 @@ class Query:
             self.__query_features['ymax'] = None
 
         # SELECT...
-        self.sql_query = "SELECT %(select_cols)s, ST_AsText(ST_Transform(%(geom_col)s,%(SRID)s))"
+        self._sql_query = "SELECT %(select_cols)s, ST_AsText(ST_Transform(%(geom_col)s,%(SRID)s))"
 
         # FROM/WHERE...
         # bbox of format (xmin, ymin, xmax, ymax)
         if type(self.bounds) == tuple:
             # FROM...
-            self.sql_query += " FROM %(schema)s.%(relation)s"
+            self._sql_query += " FROM %(schema)s.%(relation)s"
             if features['where_cond']:
-                self.sql_query += " WHERE %(where_cond)s AND"
-            self.sql_query += " ST_AsText(ST_Transform(%(geom_col)s,%(SRID)s)) "
-            self.sql_query += "&& ST_MakeEnvelope(%(xmin)s,(%(ymin)s,(%(xmax)s,(%(ymax)s"
+                self._sql_query += " WHERE %(where_cond)s AND"
+            self._sql_query += " ST_AsText(ST_Transform(%(geom_col)s,%(SRID)s)) "
+            self._sql_query += "&& ST_MakeEnvelope(%(xmin)s,(%(ymin)s,(%(xmax)s,(%(ymax)s"
         # Link to DB relation
         elif type(self.bounds) == str:
             # FROM...
-            self.sql_query += " FROM %(schema)s.%(relation)s, %(clip_relation)s as clip_relation"
+            self._sql_query += " FROM %(schema)s.%(relation)s, %(clip_relation)s as clip_relation"
             if features['where_cond']:
-                self.sql_query += " WHERE %(where_cond)s AND"
-            self.sql_query += " ST_Contains(clip_relation.geom, ST_Transform(way,%(SRID)s))"
+                self._sql_query += " WHERE %(where_cond)s AND"
+            self._sql_query += " ST_Contains(clip_relation.geom, ST_Transform(way,%(SRID)s))"
         # No clipping boundary
         else:
             if features['where_cond']:
-                self.sql_query += " WHERE %(where_cond)s"
+                self._sql_query += " WHERE %(where_cond)s"
 
     def create_where_query(self, features):
         # INSECURE => SQL-INJECTIONS possible!
@@ -135,7 +83,7 @@ class Query:
         """
 
         # SELECT...
-        self.sql_query = "SELECT {sel_cols}, ST_AsText(ST_Transform({geom},{SRID}))".format(
+        self._sql_query = "SELECT {sel_cols}, ST_AsText(ST_Transform({geom},{SRID}))".format(
             sel_cols=', '.join(features['select_cols']),
             geom=features['geom_col'],
             SRID=features['SRID'])
@@ -144,33 +92,33 @@ class Query:
         # bbox of format (xmin, ymin, xmax, ymax)
         if type(self.bounds) == tuple:
             # FROM...
-            self.sql_query += " FROM {schema}.{relation}".format(
+            self._sql_query += " FROM {schema}.{relation}".format(
                 schema=features['schema'],
                 relation=features['relation'])
             if features['where_cond']:
-                self.sql_query += " WHERE {where_cond} AND".format(
+                self._sql_query += " WHERE {where_cond} AND".format(
                     where_cond=features['where_cond'])
-            self.sql_query += " ST_AsText(ST_Transform({geom},{SRID})) ".format(
+            self._sql_query += " ST_AsText(ST_Transform({geom},{SRID})) ".format(
                 geom=features['geom_col'],
                 SRID=features['SRID'])
-            self.sql_query += "&& ST_MakeEnvelope({},{},{},{})".format(
+            self._sql_query += "&& ST_MakeEnvelope({},{},{},{})".format(
                 *self.bounds)
         # Link to DB relation
         elif type(self.bounds) == str:
             # FROM...
-            self.sql_query += " FROM {schema}.{relation}, {clip_relation} as clip_relation".format(
+            self._sql_query += " FROM {schema}.{relation}, {clip_relation} as clip_relation".format(
                 schema=features['schema'],
                 relation=features['relation'],
                 clip_relation=self.bounds)
             if features['where_cond']:
-                self.sql_query += " WHERE {where_cond} AND".format(
+                self._sql_query += " WHERE {where_cond} AND".format(
                     where_cond=features['where_cond'])
-            self.sql_query += " ST_Contains(clip_relation.geom, ST_Transform(way,{SRID}))".format(
+            self._sql_query += " ST_Contains(clip_relation.geom, ST_Transform(way,{SRID}))".format(
                 SRID=features['SRID'])
         # No clipping boundary
         else:
             if features['where_cond']:
-                self.sql_query += " WHERE {where_cond}".format(
+                self._sql_query += " WHERE {where_cond}".format(
                     where_cond=features['where_cond'])
 
         self.geom_type = features['geom_type']
@@ -187,10 +135,7 @@ class Query:
         """
 
         # Todo
-        # -> Type check oder duck type
-        # -> Check if this is 'real' clipping... => IT IS NOT!!!
-        # -> ...worse: [].intersection(...) does not work, 'Assertion failed'-error
-
+        # No real clipping -> [].intersection(...) does not work, 'Assertion failed'-error
         if self.boundary_polygon:
             coll = []
             for row in self.results:
@@ -200,6 +145,22 @@ class Query:
             self.results = coll
 
     def fetch_geoms(self, source_db):
+        def string2psycopg_features(source_db):
+            """
+            :rtype : dict
+            :return :
+            """
+            features = re.split(r":|@|/", source_db)
+            try:
+                source_db = {'db': features[3],
+                             'host': features[1],
+                             'port': features[2],
+                             'user': features[0]}
+                return source_db
+            except IndexError:
+                print(
+                    "Please provide DB access information as string 'user@host:port/db'")
+
         """
         Fetches geometries and tags from PostGIS DB and clip to given boundary if such has been supplied
         :rtype : list of dictionaries
@@ -209,9 +170,7 @@ class Query:
         """
 
         # Fetch features from PostGIS DB
-        with DBOperations(**source_db) as conn:
-            # view = conn.execute_query(query=self.sql_query,
-            #                           params=self.__query_features)
+        with DBOperations(**string2psycopg_features(source_db)) as conn:
             view = conn.execute_query(self.sql_query)
 
         # Transform results ('view') to list of dictionaries
@@ -289,4 +248,94 @@ class Query:
                         'geometry': mapping(loads(row['geom']))})
             print("Saved file to {fp}".format(fp=filepath))
         else:
-            print("Nothing to save - empty view!")
+            print("Nothing to save - empty view!")  ##
+
+
+class Points(Query):
+    def __init__(self, name, region=Region()):
+        super(Points, self).__init__(name=name, region=region)
+        self.geom_type = 'Point'
+
+
+class Lines(Query):
+    def __init__(self, name, region=Region()):
+        super(Lines, self).__init__(name=name, region=region)
+        self.geom_type = 'LineString'
+
+
+class Polygons(Query):
+    def __init__(self, name, region=Region()):
+        super(Polygons, self).__init__(name=name, region=region)
+        self.geom_type = 'Polygon'
+
+
+class OSMQuery(Query):
+    def __init__(self, name=None, region=Region()):
+        super(OSMQuery, self).__init__(name=name, region=region)
+
+    # Override 'create_where_query'-method of Query superclass in order to
+    # take care of OSM specifics within SQL-statement
+    def create_where_query(self, features):
+        # INSECURE => SQL-INJECTIONS possible!
+        """
+        Create SQL query from given query features
+        :rtype : string
+        :param region: instance of Region() defining query boundaries
+        :param features: dictionary defining basic query features
+        :return: sql query
+        """
+
+        # SELECT...
+        self._sql_query = "SELECT {sel_cols}, ST_AsText(ST_Transform(way,{SRID}))".format(
+            sel_cols=', '.join(features['select_cols']),
+            SRID=features['SRID'])
+
+        # FROM/WHERE...
+        # bbox of format (xmin, ymin, xmax, ymax)
+        if type(self.bounds) == tuple:
+            # Clip outside PostGIS-DB using external clip relation
+            self._sql_query += " FROM public.{relation}".format(
+                relation=features['relation'])
+            if features['where_cond']:
+                self._sql_query += " WHERE {where_cond} AND".format(
+                    where_cond=features['where_cond'])
+            self._sql_query += " ST_AsText(ST_Transform(way,{SRID})) ".format(
+                SRID=features['SRID'])
+            self._sql_query += "&& ST_MakeEnvelope({},{},{},{})".format(
+                *self.bounds)
+        # Link to DB relation
+        elif type(self.bounds) == str:
+            # Clip within PostGIS-DB using internal clip relation
+            self._sql_query += " FROM public.{relation}, {clip_relation} as clip_relation".format(
+                relation=features['relation'],
+                clip_relation=self.bounds)
+            if features['where_cond']:
+                self._sql_query += " WHERE {where_cond} AND".format(
+                    where_cond=features['where_cond'])
+            self._sql_query += " ST_Contains(clip_relation.geom, ST_Transform(way,{SRID}))".format(
+                SRID=features['SRID'])
+        # No clipping boundary
+        else:
+            self._sql_query += " FROM public.{relation}".format(
+                relation=features['relation'])
+            if features['where_cond']:
+                self._sql_query += " WHERE {where_cond}".format(
+                    where_cond=features['where_cond'])
+
+        self.SRID = features['SRID']
+        self.select_cols = features['select_cols']
+
+
+class OSMPoints(OSMQuery, Points):
+    def __init__(self, name, region=Region()):
+        super(OSMPoints, self).__init__(name=name, region=region)
+
+
+class OSMLines(OSMQuery, Lines):
+    def __init__(self, name, region=Region()):
+        super(OSMQuery, self).__init__(name=name, region=region)
+
+
+class OSMPolygons(OSMQuery, Polygons):
+    def __init__(self, name, region=Region()):
+        super(OSMQuery, self).__init__(name=name, region=region)
