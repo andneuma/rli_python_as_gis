@@ -14,8 +14,6 @@ class Region:
     def __init__(self, name=None, boundary=None):
         self.name = name
         self.__class__.instances[self.name] = weakref.proxy(self)
-        self.bounds = None
-        self.boundary_polygon = None
 
         self.set_boundaries(boundary)
 

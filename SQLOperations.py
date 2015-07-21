@@ -28,20 +28,8 @@ class DBOperations():
 
     def execute_query(self, query):
         try:
-            print("Querying DATABASE...(may take a few minutes!)")
-            ts = datetime.datetime.now()
-
             self.cur.execute(query)
             results = self.cur.fetchall()
-
-            td = datetime.datetime.now() - ts
-
-            sec = int(td.seconds % 60)
-            min = int((td.seconds - sec) / 60)
-
-            print("...done in {td_min}m:{td_sec}s".format(
-                td_min=min,
-                td_sec=sec))
             return results
         except psycopg2.Error as e:
             print("ERROR during DB query: {e}".format(e=e.pgerror))
