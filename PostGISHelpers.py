@@ -4,22 +4,45 @@ import matplotlib.pyplot as plt
 from matplotlib.collections import LineCollection
 import numpy as np
 import fiona  # handling ESRI shape format
-from shapely.wkt import loads as loads
-from shapely.geometry import mapping, Polygon, box
+from shapely.wkt import loads
+from shapely.geometry import mapping
+import logging
 
 from SQLOperations import *
 from region import *
 
 
 class Query:
-    instances = {} # Instance collector
+    instances = {}  # Instance collector
 
-    def __init__(self, name=None, region=Region()):
+    def __init__(self, name=None, region=Region(), debug_level='i'):
         self.query_name = name
         self.__class__.instances[self.query_name] = weakref.proxy(self)
         self.results = []
         self.region = region
         self.geom_type = None
+
+        # Specify console logging
+        self._logger = logging.getLogger('logger')
+
+        self.console_handler.setFormatter(
+            logging.Formatter('%(levelname)s: %(message)s'))
+        self._logger.addHandler(logging.StreamHandler())
+        self.set_debug_level(debug_level)
+
+    def set_debug_level(self, value):
+        if value in (10, 'd', 'debug'):
+            self._logger.setLevel(10)
+        elif value in (20, 'i', 'info'):
+            self._logger.setLevel(20)
+        elif value in (30, 'w', 'warning'):
+            self._logger.setLevel(30)
+        elif value in (40, 'e', 'error'):
+            self._logger.setLevel(40)
+        elif value in (50, 'c', 'critical'):
+            self._logger.setLevel(50)
+        else:
+            self._logger.setLevel(0)
 
     def create_where_query(self,
                            relation,
@@ -95,7 +118,6 @@ class Query:
         Clips list of n-tuples as result of SELECT-query to boundary of a given
         instance of Region()
         """
-
         # Todo
         # No real clipping -> [].intersection(...) does not work, 'Assertion failed'-error
         coll = []
@@ -105,8 +127,7 @@ class Query:
                 coll.append(row)
         self.results = coll
 
-    @staticmethod
-    def string2psycopg_features(db_string):
+    def string2psycopg_features(self, db_string):
         """
         Convert input string containing DB access information in SQLAlchemy
         style format ('user@host:port/database-name')
@@ -121,7 +142,7 @@ class Query:
                          'user': features[0]}
             return source_db
         except IndexError:
-            print(
+            self._logger.error(
                 "Please provide DB access information as string 'user@host:port/db'")
 
     def fetch_geoms(self, source_db):
@@ -130,7 +151,7 @@ class Query:
         Region object instance
         :param source_db: DB to fetch data from
         """
-        print(
+        self._logger.info(
             "Querying DATABASE for {geoms}...(may take some time!)".format(
                 geoms=self.geom_type))
         ts = datetime.datetime.now()
@@ -145,10 +166,11 @@ class Query:
         min = int((td.seconds - sec) / 60)
 
         # Print number of fetched elements
-        print("\n => Fetched {n} {geoms}(s) in {td_min}m:{td_sec}s\n".format(
-            n=len(view),
-            geoms=self.geom_type, td_min=min,
-            td_sec=sec))
+        self._logger.info(
+            "Fetched {n} {geoms}(s) in {td_min}m:{td_sec}s\n".format(
+                n=len(view),
+                geoms=self.geom_type, td_min=min,
+                td_sec=sec))
 
 
         # Transform results ('view') to list of dictionaries
@@ -179,7 +201,7 @@ class Query:
                 print(t)
                 print("(List truncated to {x} elements)".format(x=n))
         except IndexError:
-            print("No Results to display!")
+            self._logger.warning("No Results to display!")
 
     def _get_vectors_from_postgis_map(self, bm, geom):
         """
@@ -216,8 +238,7 @@ class Query:
             vectors.append(np.asarray(seg))
         return vectors
 
-    @staticmethod
-    def bbox_of_view(results):
+    def bbox_of_view(self, results):
         """
         Create a bounding box out of query results where self.region.bounds = None
         Protected method used by self.plot_view()
@@ -234,11 +255,9 @@ class Query:
                     'xmax': geom_bounds[2],
                     'ymax': geom_bounds[3]}
         except:
-            print("Error: Empty view, cannot plot any results!")
+            self._logger.warning("Error: Empty view, cannot plot any results!")
             return None
 
-        # Todo
-        # -> This part of code definately needs improvement...
         for result in results:
             geom_shapely = loads(result['geom'])
             try:
@@ -301,8 +320,7 @@ class Query:
 
         return m
 
-    @staticmethod
-    def _collect_geoms(query_object, ax, m, el_limit=5000):
+    def _collect_geoms(self, query_object, ax, m, el_limit=5000):
         """
         Create vectors for different geom and multi-geom types
         :rtype: subplot
@@ -344,7 +362,7 @@ class Query:
                 #     ax.add_collection(border)
 
         else:
-            print("Error: >5000 elements to plot!")
+            self._logger.error("Error: >5000 elements to plot!")
 
         return ax
 
@@ -402,9 +420,9 @@ class Query:
                     output.write({
                         'properties': row['properties'],
                         'geometry': mapping(loads(row['geom']))})
-            print("Saved file to {fp}".format(fp=filepath))
+            self._logger.info("Saved file to {fp}".format(fp=filepath))
         else:
-            print("Nothing to save - empty view!")  ##
+            self._logger.warning("Nothing to save - empty view!")  ##
 
 
 class Points(Query):

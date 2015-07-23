@@ -62,7 +62,7 @@
 			CodeGeneration
 		</plugin>
 </profile>
-<XMI xmi.version = '1.2' xmlns:UML = 'org.omg.xmi.namespace.UML' timestamp = 'Tue Jul 21 12:31:39 CEST 2015'>
+<XMI xmi.version = '1.2' xmlns:UML = 'org.omg.xmi.namespace.UML' timestamp = 'Thu Jul 23 12:38:37 CEST 2015'>
   <XMI.header>    <XMI.documentation>
       <XMI.exporter>ArgoUML (using Netbeans XMI Writer version 1.0)</XMI.exporter>
       <XMI.exporterVersion>0.34(6) revised on $Date: 2010-01-11 22:20:14 +0100 (Mon, 11 Jan 2010) $ </XMI.exporterVersion>
@@ -195,6 +195,29 @@
               <UML:StructuralFeature.type>
                 <UML:Class xmi.idref = '10-42-2-8-2532a405:14e90d1b2a8:-8000:000000000000087C'/>
               </UML:StructuralFeature.type>
+            </UML:Attribute>
+            <UML:Operation xmi.id = '-64--88-10-53-55cb50be:14eba78b35c:-8000:0000000000000ACB'
+              name = 'set_debug_level' visibility = 'public' isSpecification = 'false'
+              ownerScope = 'instance' isQuery = 'false' concurrency = 'sequential' isRoot = 'false'
+              isLeaf = 'false' isAbstract = 'false'>
+              <UML:BehavioralFeature.parameter>
+                <UML:Parameter xmi.id = '-64--88-10-53-55cb50be:14eba78b35c:-8000:0000000000000ACC'
+                  name = 'return' isSpecification = 'false' kind = 'return'/>
+                <UML:Parameter xmi.id = '-64--88-10-53-55cb50be:14eba78b35c:-8000:0000000000000ACD'
+                  name = 'value' isSpecification = 'false' kind = 'in'/>
+              </UML:BehavioralFeature.parameter>
+            </UML:Operation>
+            <UML:Attribute xmi.id = '-64--88-10-53-55cb50be:14eba78b35c:-8000:0000000000000AD0'
+              name = 'logger' visibility = 'public' isSpecification = 'false' ownerScope = 'instance'
+              changeability = 'changeable' targetScope = 'instance'>
+              <UML:StructuralFeature.multiplicity>
+                <UML:Multiplicity xmi.id = '-64--88-10-53-55cb50be:14eba78b35c:-8000:0000000000000AD1'>
+                  <UML:Multiplicity.range>
+                    <UML:MultiplicityRange xmi.id = '-64--88-10-53-55cb50be:14eba78b35c:-8000:0000000000000AD2'
+                      lower = '1' upper = '1'/>
+                  </UML:Multiplicity.range>
+                </UML:Multiplicity>
+              </UML:StructuralFeature.multiplicity>
             </UML:Attribute>
           </UML:Classifier.feature>
         </UML:Class>
@@ -736,7 +759,7 @@
       strokecolor="black"
     />
     <group name="Fig0.4"
-         description="org.argouml.uml.diagram.ui.FigAttributesCompartment[329, 41, 286, 92]"
+         description="org.argouml.uml.diagram.ui.FigAttributesCompartment[329, 41, 286, 93]"
          href="10-42-2-8-2532a405:14e90d1b2a8:-8000:0000000000000872"
          fill="0"
          fillcolor="white"
@@ -750,7 +773,7 @@
         x="329"
         y="41"
         width="286"
-        height="92"
+        height="93"
         fill="0"
         fillcolor="white"
         stroke="0"
@@ -808,7 +831,7 @@
         x="329"
         y="92"
         width="286"
-        height="23"
+        height="17"
         fill="0"
         fillcolor="white"
         stroke="0"
@@ -820,6 +843,22 @@
         textsize="13"
         justification="Left"
       >region : Region</text>
+      <text name="Fig0.4.5"
+        x="329"
+        y="109"
+        width="286"
+        height="23"
+        fill="0"
+        fillcolor="white"
+        stroke="0"
+        strokecolor="black"
+        textcolor="black"
+        font="Lucida Grande"
+        italic="false"
+        bold="false"
+        textsize="13"
+        justification="Left"
+      >logger</text>
     </group>
     <rectangle name="Fig0.5"
       x="328"
@@ -832,7 +871,7 @@
       strokecolor="black"
     />
     <group name="Fig0.6"
-         description="org.argouml.uml.diagram.ui.FigOperationsCompartment[329, 134, 286, 109]"
+         description="org.argouml.uml.diagram.ui.FigOperationsCompartment[329, 134, 286, 110]"
          href="10-42-2-8-2532a405:14e90d1b2a8:-8000:0000000000000872"
          fill="0"
          fillcolor="white"
@@ -846,7 +885,7 @@
         x="329"
         y="134"
         width="286"
-        height="109"
+        height="110"
         fill="0"
         fillcolor="white"
         stroke="0"
@@ -920,7 +959,7 @@
         x="329"
         y="202"
         width="286"
-        height="23"
+        height="17"
         fill="0"
         fillcolor="white"
         stroke="0"
@@ -932,6 +971,22 @@
         textsize="13"
         justification="Left"
       >export2shp()</text>
+      <text name="Fig0.6.6"
+        x="329"
+        y="219"
+        width="286"
+        height="23"
+        fill="0"
+        fillcolor="white"
+        stroke="0"
+        strokecolor="black"
+        textcolor="black"
+        font="Lucida Grande"
+        italic="false"
+        bold="false"
+        textsize="13"
+        justification="Left"
+      >set_debug_level(value)</text>
     </group>
   </group>
   <group name="Fig1"
@@ -1161,7 +1216,7 @@
       justification="Center"
     >OSMQuery</text>
     <group name="Fig2.2"
-         description="org.argouml.uml.diagram.ui.FigStereotypesGroup[-14, 273, 302, 0]"
+         description="org.argouml.uml.diagram.ui.FigStereotypesGroup[97, 273, 191, 0]"
          href="10-42-2-8-4eb65919:14e920296a4:-8000:0000000000000A91"
          fill="0"
          fillcolor="white"
@@ -1173,9 +1228,9 @@
       </private>
       
       <rectangle name="Fig2.2.0"
-        x="-14"
+        x="97"
         y="273"
-        width="302"
+        width="191"
         height="0"
         fill="0"
         fillcolor="white"
@@ -1693,7 +1748,7 @@
       justification="Center"
     >OSMPolygons</text>
     <group name="Fig8.2"
-         description="org.argouml.uml.diagram.ui.FigStereotypesGroup[537, 521, 93, 0]"
+         description="org.argouml.uml.diagram.ui.FigStereotypesGroup[534, 521, 97, 0]"
          href="10-42-2-8-4eb65919:14e920296a4:-8000:0000000000000A9A"
          fill="0"
          fillcolor="white"
@@ -1705,9 +1760,9 @@
       </private>
       
       <rectangle name="Fig8.2.0"
-        x="537"
+        x="534"
         y="521"
-        width="93"
+        width="97"
         height="0"
         fill="0"
         fillcolor="white"
@@ -2443,7 +2498,7 @@
       justification="Center"
     >OSMCollection</text>
     <group name="Fig18.2"
-         description="org.argouml.uml.diagram.ui.FigStereotypesGroup[105, 424, 64, 0]"
+         description="org.argouml.uml.diagram.ui.FigStereotypesGroup[105, 425, 163, 0]"
          href="10-42-2-8-2db3350:14ea1924301:-8000:0000000000000AC3"
          fill="0"
          fillcolor="white"
@@ -2456,8 +2511,8 @@
       
       <rectangle name="Fig18.2.0"
         x="105"
-        y="424"
-        width="64"
+        y="425"
+        width="163"
         height="0"
         fill="0"
         fillcolor="white"
@@ -2645,7 +2700,7 @@
                         offset="-10" />
     </private>
     <path name="Fig19.0"
-      description="org.tigris.gef.presentation.FigPoly"
+      description="org.argouml.gefext.ArgoFigPoly"
       fill="0"
       fillcolor="white"
       stroke="1"
@@ -2676,7 +2731,7 @@
                         offset="-10" />
     </private>
     <path name="Fig20.0"
-      description="org.tigris.gef.presentation.FigPoly"
+      description="org.argouml.gefext.ArgoFigPoly"
       fill="0"
       fillcolor="white"
       stroke="1"
