@@ -2,9 +2,16 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="31c03905-7c45-470d-a699-6838c4dd5970" name="Default" comment="Added docstrings for functions">
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/simple_log.py" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/UML_specification/.project" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/UML_specification/rli_python_as_gis_UML_model.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/UML_specification/rli_python_as_gis_UML_model.uml" afterPath="" />
+      <change type="MOVED" beforePath="$PROJECT_DIR$/WebOSM.py" afterPath="$PROJECT_DIR$/WebOSMHelpers.py" />
+      <change type="MOVED" beforePath="$PROJECT_DIR$/postgis_workspace.py" afterPath="$PROJECT_DIR$/usage_examples.py" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/PostGISHelpers.py" afterPath="$PROJECT_DIR$/PostGISHelpers.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/postgis_workspace.py" afterPath="$PROJECT_DIR$/postgis_workspace.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/UML_specification/rli_python_as_gis_UML_model.uml" afterPath="$PROJECT_DIR$/UML_specification/rli_python_as_gis_UML_model.uml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/SQLOperations.py" afterPath="$PROJECT_DIR$/SQLOperations.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Old_shizzle/postgis_workspace.py" afterPath="$PROJECT_DIR$/Old_shizzle/postgis_workspace.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/region.py" afterPath="$PROJECT_DIR$/region.py" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
     </list>
     <ignored path="rli_python_as_gis.iws" />
@@ -26,47 +33,62 @@
   </component>
   <component name="FileEditorManager">
     <leaf>
-      <file leaf-file-name="postgis_workspace.py" pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/postgis_workspace.py">
+      <file leaf-file-name="usage_examples.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/usage_examples.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.5988024">
-              <caret line="21" column="32" selection-start-line="21" selection-start-column="32" selection-end-line="21" selection-end-column="32" />
+            <state vertical-scroll-proportion="0.0">
+              <caret line="163" column="74" selection-start-line="143" selection-start-column="0" selection-end-line="163" selection-end-column="74" />
               <folding>
-                <element signature="e#72#100#0" expanded="true" />
+                <element signature="e#0#28#0" expanded="true" />
               </folding>
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="PostGISHelpers.py" pinned="false" current-in-tab="false">
+      <file leaf-file-name="PostGISHelpers.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/PostGISHelpers.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="-11.666667">
-              <caret line="32" column="35" selection-start-line="32" selection-start-column="35" selection-end-line="32" selection-end-column="35" />
+            <state vertical-scroll-proportion="-5.126582">
+              <caret line="4" column="12" selection-start-line="4" selection-start-column="12" selection-end-line="4" selection-end-column="12" />
               <folding>
-                <element signature="e#16663#16801#0" expanded="false" />
-                <element signature="e#16714#16801#0" expanded="false" />
-                <element signature="e#16828#16970#0" expanded="false" />
-                <element signature="e#16879#16970#0" expanded="false" />
-                <element signature="e#17000#17142#0" expanded="false" />
-                <element signature="e#17051#17142#0" expanded="false" />
-                <element signature="e#17172#17284#0" expanded="false" />
-                <element signature="e#17228#17284#0" expanded="false" />
-                <element signature="e#17326#17434#0" expanded="false" />
-                <element signature="e#17377#17434#0" expanded="false" />
-                <element signature="e#17474#17581#0" expanded="false" />
-                <element signature="e#17525#17581#0" expanded="false" />
-                <element signature="e#17627#17734#0" expanded="false" />
-                <element signature="e#17678#17734#0" expanded="false" />
-                <element signature="e#17772#21089#0" expanded="false" />
-                <element signature="e#17936#18254#0" expanded="false" />
-                <element signature="e#18590#19686#0" expanded="false" />
-                <element signature="e#18590#19144#1" expanded="false" />
-                <element signature="e#19772#20199#0" expanded="false" />
-                <element signature="e#19772#19948#1" expanded="false" />
-                <element signature="e#20265#21089#0" expanded="false" />
-                <element signature="e#20265#20525#1" expanded="false" />
+                <element signature="e#922#1146#0" expanded="false" />
+                <element signature="e#3713#3825#0" expanded="false" />
+                <element signature="e#3713#3788#1" expanded="false" />
+                <element signature="e#3865#4310#0" expanded="false" />
+                <element signature="e#3865#3989#1" expanded="false" />
+                <element signature="e#4370#5016#0" expanded="false" />
+                <element signature="e#4370#4591#1" expanded="false" />
+                <element signature="e#5064#5388#1" expanded="false" />
+                <element signature="e#6502#7154#0" expanded="false" />
+                <element signature="e#6502#6623#1" expanded="false" />
+                <element signature="e#7219#8365#0" expanded="false" />
+                <element signature="e#7219#7467#1" expanded="false" />
+                <element signature="e#8412#10443#0" expanded="false" />
+                <element signature="e#8412#8703#1" expanded="false" />
+                <element signature="e#12238#14312#0" expanded="false" />
+                <element signature="e#12238#12559#1" expanded="false" />
+                <element signature="e#14378#14908#0" expanded="false" />
+                <element signature="e#14378#14607#1" expanded="false" />
+                <element signature="e#14954#16602#0" expanded="false" />
+                <element signature="e#14954#15040#1" expanded="false" />
+                <element signature="e#15091#15932#0" expanded="false" />
+                <element signature="e#15091#15194#1" expanded="false" />
+                <element signature="e#16630#16768#0" expanded="false" />
+                <element signature="e#16681#16768#0" expanded="false" />
+                <element signature="e#16795#16937#0" expanded="false" />
+                <element signature="e#16846#16937#0" expanded="false" />
+                <element signature="e#20045#20472#0" expanded="false" />
               </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="simple_log.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/simple_log.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state vertical-scroll-proportion="-5.851852">
+              <caret line="23" column="23" selection-start-line="23" selection-start-column="21" selection-end-line="23" selection-end-column="23" />
+              <folding />
             </state>
           </provider>
         </entry>
@@ -75,32 +97,20 @@
         <entry file="file://$PROJECT_DIR$/region.py">
           <provider selected="true" editor-type-id="text-editor">
             <state vertical-scroll-proportion="0.0">
-              <caret line="42" column="17" selection-start-line="42" selection-start-column="17" selection-end-line="42" selection-end-column="17" />
+              <caret line="2" column="0" selection-start-line="2" selection-start-column="0" selection-end-line="2" selection-end-column="0" />
               <folding>
-                <element signature="e#0#42#0" expanded="true" />
-                <element signature="e#549#607#1" expanded="false" />
+                <element signature="e#63#105#0" expanded="true" />
+                <element signature="e#612#670#1" expanded="false" />
               </folding>
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="SQLOperations.py" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/SQLOperations.py">
+      <file leaf-file-name="WebOSMHelpers.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/WebOSMHelpers.py">
           <provider selected="true" editor-type-id="text-editor">
             <state vertical-scroll-proportion="0.0">
-              <caret line="32" column="0" selection-start-line="32" selection-start-column="0" selection-end-line="32" selection-end-column="0" />
-              <folding>
-                <element signature="e#65#80#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="WebOSM.py" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/WebOSM.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.0">
-              <caret line="8" column="66" selection-start-line="8" selection-start-column="66" selection-end-line="8" selection-end-column="66" />
+              <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="2" selection-end-column="3" />
               <folding>
                 <element signature="e#57#70#0" expanded="true" />
               </folding>
@@ -121,7 +131,7 @@
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
   <component name="HighlightingSettingsPerFile">
-    <setting file="file://$PROJECT_DIR$/postgis_workspace.py" root0="SKIP_INSPECTION" />
+    <setting file="file://$PROJECT_DIR$/usage_examples.py" root0="SKIP_INSPECTION" />
   </component>
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
@@ -144,9 +154,12 @@
         <option value="$PROJECT_DIR$/OSM_web_services.py" />
         <option value="$PROJECT_DIR$/postgis_workspace_OOP.py" />
         <option value="$PROJECT_DIR$/Old_shizzle/postgis_query_helpers.py" />
+        <option value="$PROJECT_DIR$/postgis_workspace.py" />
         <option value="$PROJECT_DIR$/SQLOperations.py" />
         <option value="$PROJECT_DIR$/region.py" />
-        <option value="$PROJECT_DIR$/postgis_workspace.py" />
+        <option value="$PROJECT_DIR$/logger.py" />
+        <option value="$PROJECT_DIR$/usage_examples.py" />
+        <option value="$PROJECT_DIR$/simple_log.py" />
         <option value="$PROJECT_DIR$/PostGISHelpers.py" />
       </list>
     </option>
@@ -210,8 +223,6 @@
       <sortByType />
     </navigator>
     <panes>
-      <pane id="Scratches" />
-      <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
           <PATH>
@@ -230,22 +241,10 @@
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="rli_python_as_gis" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="rli_python_as_gis" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="Old_shizzle" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
         </subPane>
       </pane>
+      <pane id="Scope" />
+      <pane id="Scratches" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -286,7 +285,7 @@
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <module name="rli_python_as_gis" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/postgis_workspace.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/usage_examples.py" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <RunnerSettings RunnerId="PyDebugRunner" />
@@ -557,15 +556,14 @@
     <editor active="true" />
     <layout>
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32806325" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
-      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32938075" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3992095" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32806325" sideWeight="0.50035334" order="7" side_tool="true" content_ui="tabs" />
-      <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.2155477" sideWeight="0.5321945" order="2" side_tool="true" content_ui="tabs" />
+      <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.2155477" sideWeight="0.53745073" order="2" side_tool="true" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.325887" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.325887" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.24946997" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Application Servers" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.2155477" sideWeight="0.4678055" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.2155477" sideWeight="0.46254927" order="0" side_tool="false" content_ui="combo" />
       <window_info id="Python Console" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.30486202" sideWeight="0.49964663" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="DB Browser" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="DB Execution Console" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32938075" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
@@ -574,11 +572,12 @@
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Changes" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32806325" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
+      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32938075" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="SLIDING" type="SLIDING" visible="false" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
-      <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="combo" />
       <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
+      <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="combo" />
     </layout>
     <layout-to-restore>
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
@@ -597,12 +596,12 @@
       <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="SLIDING" type="SLIDING" visible="false" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Application Servers" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="12" side_tool="false" content_ui="tabs" />
       <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.24946997" sideWeight="0.49934125" order="0" side_tool="false" content_ui="combo" />
-      <window_info id="DB Browser" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Python Console" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.32674572" sideWeight="0.49964663" order="13" side_tool="false" content_ui="tabs" />
-      <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="combo" />
-      <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
-      <window_info id="DB Execution Console" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32938075" sideWeight="0.5" order="14" side_tool="false" content_ui="tabs" />
+      <window_info id="DB Browser" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="DB Execution Console" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32938075" sideWeight="0.5" order="14" side_tool="false" content_ui="tabs" />
+      <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
+      <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="combo" />
     </layout-to-restore>
   </component>
   <component name="Vcs.Log.UiProperties">
@@ -643,48 +642,43 @@
     </watches-manager>
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/postgis_workspace.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding>
-            <element signature="e#72#100#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/PostGISHelpers.py">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
           <caret line="107" column="41" selection-start-line="107" selection-start-column="41" selection-end-line="107" selection-end-column="41" />
           <folding>
-            <element signature="e#16663#16801#0" expanded="false" />
-            <element signature="e#16714#16801#0" expanded="false" />
-            <element signature="e#16828#16970#0" expanded="false" />
-            <element signature="e#16879#16970#0" expanded="false" />
-            <element signature="e#17000#17142#0" expanded="false" />
-            <element signature="e#17051#17142#0" expanded="false" />
-            <element signature="e#17172#17284#0" expanded="false" />
-            <element signature="e#17228#17284#0" expanded="false" />
-            <element signature="e#17326#17434#0" expanded="false" />
-            <element signature="e#17377#17434#0" expanded="false" />
-            <element signature="e#17474#17581#0" expanded="false" />
-            <element signature="e#17525#17581#0" expanded="false" />
-            <element signature="e#17627#17734#0" expanded="false" />
-            <element signature="e#17678#17734#0" expanded="false" />
-            <element signature="e#17772#21089#0" expanded="false" />
-            <element signature="e#17936#18254#0" expanded="false" />
-            <element signature="e#18590#19686#0" expanded="false" />
-            <element signature="e#18590#19144#1" expanded="false" />
-            <element signature="e#19772#20199#0" expanded="false" />
-            <element signature="e#19772#19948#1" expanded="false" />
-            <element signature="e#20265#21089#0" expanded="false" />
-            <element signature="e#20265#20525#1" expanded="false" />
+            <element signature="e#922#1146#0" expanded="false" />
+            <element signature="e#3713#3825#0" expanded="false" />
+            <element signature="e#3713#3788#1" expanded="false" />
+            <element signature="e#3865#4310#0" expanded="false" />
+            <element signature="e#3865#3989#1" expanded="false" />
+            <element signature="e#4370#5016#0" expanded="false" />
+            <element signature="e#4370#4591#1" expanded="false" />
+            <element signature="e#5064#5388#1" expanded="false" />
+            <element signature="e#6502#7154#0" expanded="false" />
+            <element signature="e#6502#6623#1" expanded="false" />
+            <element signature="e#7219#8365#0" expanded="false" />
+            <element signature="e#7219#7467#1" expanded="false" />
+            <element signature="e#8412#10443#0" expanded="false" />
+            <element signature="e#8412#8703#1" expanded="false" />
+            <element signature="e#12238#14312#0" expanded="false" />
+            <element signature="e#12238#12559#1" expanded="false" />
+            <element signature="e#14378#14908#0" expanded="false" />
+            <element signature="e#14378#14607#1" expanded="false" />
+            <element signature="e#14954#16602#0" expanded="false" />
+            <element signature="e#14954#15040#1" expanded="false" />
+            <element signature="e#15091#15932#0" expanded="false" />
+            <element signature="e#15091#15194#1" expanded="false" />
+            <element signature="e#16630#16768#0" expanded="false" />
+            <element signature="e#16681#16768#0" expanded="false" />
+            <element signature="e#16795#16937#0" expanded="false" />
+            <element signature="e#16846#16937#0" expanded="false" />
+            <element signature="e#20045#20472#0" expanded="false" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/WebOSM.py">
+    <entry file="file://$PROJECT_DIR$/WebOSMHelpers.py">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
           <caret line="8" column="66" selection-start-line="8" selection-start-column="66" selection-end-line="8" selection-end-column="66" />
@@ -704,12 +698,12 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/postgis_workspace.py">
+    <entry file="file://$PROJECT_DIR$/usage_examples.py">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
           <caret line="38" column="9" selection-start-line="38" selection-start-column="9" selection-end-line="38" selection-end-column="9" />
           <folding>
-            <element signature="e#72#100#0" expanded="true" />
+            <element signature="e#0#28#0" expanded="true" />
           </folding>
         </state>
       </provider>
@@ -719,33 +713,38 @@
         <state vertical-scroll-proportion="0.0">
           <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
           <folding>
-            <element signature="e#16663#16801#0" expanded="false" />
-            <element signature="e#16714#16801#0" expanded="false" />
-            <element signature="e#16828#16970#0" expanded="false" />
-            <element signature="e#16879#16970#0" expanded="false" />
-            <element signature="e#17000#17142#0" expanded="false" />
-            <element signature="e#17051#17142#0" expanded="false" />
-            <element signature="e#17172#17284#0" expanded="false" />
-            <element signature="e#17228#17284#0" expanded="false" />
-            <element signature="e#17326#17434#0" expanded="false" />
-            <element signature="e#17377#17434#0" expanded="false" />
-            <element signature="e#17474#17581#0" expanded="false" />
-            <element signature="e#17525#17581#0" expanded="false" />
-            <element signature="e#17627#17734#0" expanded="false" />
-            <element signature="e#17678#17734#0" expanded="false" />
-            <element signature="e#17772#21089#0" expanded="false" />
-            <element signature="e#17936#18254#0" expanded="false" />
-            <element signature="e#18590#19686#0" expanded="false" />
-            <element signature="e#18590#19144#1" expanded="false" />
-            <element signature="e#19772#20199#0" expanded="false" />
-            <element signature="e#19772#19948#1" expanded="false" />
-            <element signature="e#20265#21089#0" expanded="false" />
-            <element signature="e#20265#20525#1" expanded="false" />
+            <element signature="e#922#1146#0" expanded="false" />
+            <element signature="e#3713#3825#0" expanded="false" />
+            <element signature="e#3713#3788#1" expanded="false" />
+            <element signature="e#3865#4310#0" expanded="false" />
+            <element signature="e#3865#3989#1" expanded="false" />
+            <element signature="e#4370#5016#0" expanded="false" />
+            <element signature="e#4370#4591#1" expanded="false" />
+            <element signature="e#5064#5388#1" expanded="false" />
+            <element signature="e#6502#7154#0" expanded="false" />
+            <element signature="e#6502#6623#1" expanded="false" />
+            <element signature="e#7219#8365#0" expanded="false" />
+            <element signature="e#7219#7467#1" expanded="false" />
+            <element signature="e#8412#10443#0" expanded="false" />
+            <element signature="e#8412#8703#1" expanded="false" />
+            <element signature="e#12238#14312#0" expanded="false" />
+            <element signature="e#12238#12559#1" expanded="false" />
+            <element signature="e#14378#14908#0" expanded="false" />
+            <element signature="e#14378#14607#1" expanded="false" />
+            <element signature="e#14954#16602#0" expanded="false" />
+            <element signature="e#14954#15040#1" expanded="false" />
+            <element signature="e#15091#15932#0" expanded="false" />
+            <element signature="e#15091#15194#1" expanded="false" />
+            <element signature="e#16630#16768#0" expanded="false" />
+            <element signature="e#16681#16768#0" expanded="false" />
+            <element signature="e#16795#16937#0" expanded="false" />
+            <element signature="e#16846#16937#0" expanded="false" />
+            <element signature="e#20045#20472#0" expanded="false" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/WebOSM.py">
+    <entry file="file://$PROJECT_DIR$/WebOSMHelpers.py">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
           <caret line="8" column="66" selection-start-line="8" selection-start-column="66" selection-end-line="8" selection-end-column="66" />
@@ -775,7 +774,7 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/postgis_workspace.py">
+    <entry file="file://$PROJECT_DIR$/usage_examples.py">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
           <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
@@ -792,7 +791,7 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/postgis_workspace.py">
+    <entry file="file://$PROJECT_DIR$/usage_examples.py">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
           <caret line="53" column="0" selection-start-line="53" selection-start-column="0" selection-end-line="53" selection-end-column="0" />
@@ -806,7 +805,7 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/postgis_workspace.py">
+    <entry file="file://$PROJECT_DIR$/usage_examples.py">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
           <caret line="63" column="7" selection-start-line="63" selection-start-column="7" selection-end-line="63" selection-end-column="7" />
@@ -820,21 +819,21 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/postgis_workspace.py">
+    <entry file="file://$PROJECT_DIR$/usage_examples.py">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
           <caret line="61" column="10" selection-start-line="61" selection-start-column="10" selection-end-line="61" selection-end-column="10" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/postgis_workspace.py">
+    <entry file="file://$PROJECT_DIR$/usage_examples.py">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
           <caret line="72" column="34" selection-start-line="72" selection-start-column="34" selection-end-line="72" selection-end-column="34" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/postgis_workspace.py">
+    <entry file="file://$PROJECT_DIR$/usage_examples.py">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
           <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
@@ -855,56 +854,56 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/postgis_workspace.py">
+    <entry file="file://$PROJECT_DIR$/usage_examples.py">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
           <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/postgis_workspace.py">
+    <entry file="file://$PROJECT_DIR$/usage_examples.py">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
           <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/postgis_workspace.py">
+    <entry file="file://$PROJECT_DIR$/usage_examples.py">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
           <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/postgis_workspace.py">
+    <entry file="file://$PROJECT_DIR$/usage_examples.py">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
           <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/postgis_workspace.py">
+    <entry file="file://$PROJECT_DIR$/usage_examples.py">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
           <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/postgis_workspace.py">
+    <entry file="file://$PROJECT_DIR$/usage_examples.py">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
           <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/postgis_workspace.py">
+    <entry file="file://$PROJECT_DIR$/usage_examples.py">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
           <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/postgis_workspace.py">
+    <entry file="file://$PROJECT_DIR$/usage_examples.py">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
           <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
@@ -1042,9 +1041,19 @@
     <entry file="file://$PROJECT_DIR$/SQLOperations.py">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
-          <caret line="32" column="0" selection-start-line="32" selection-start-column="0" selection-end-line="32" selection-end-column="0" />
+          <caret line="2" column="0" selection-start-line="2" selection-start-column="0" selection-end-line="2" selection-end-column="0" />
           <folding>
             <element signature="e#65#80#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/WebOSMHelpers.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="2" selection-end-column="3" />
+          <folding>
+            <element signature="e#57#70#0" expanded="true" />
           </folding>
         </state>
       </provider>
@@ -1052,61 +1061,64 @@
     <entry file="file://$PROJECT_DIR$/region.py">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
-          <caret line="42" column="17" selection-start-line="42" selection-start-column="17" selection-end-line="42" selection-end-column="17" />
+          <caret line="2" column="0" selection-start-line="2" selection-start-column="0" selection-end-line="2" selection-end-column="0" />
           <folding>
-            <element signature="e#0#42#0" expanded="true" />
-            <element signature="e#549#607#1" expanded="false" />
+            <element signature="e#63#105#0" expanded="true" />
+            <element signature="e#612#670#1" expanded="false" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/WebOSM.py">
+    <entry file="file://$PROJECT_DIR$/usage_examples.py">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
-          <caret line="8" column="66" selection-start-line="8" selection-start-column="66" selection-end-line="8" selection-end-column="66" />
+          <caret line="163" column="74" selection-start-line="143" selection-start-column="0" selection-end-line="163" selection-end-column="74" />
           <folding>
-            <element signature="e#57#70#0" expanded="true" />
+            <element signature="e#0#28#0" expanded="true" />
           </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/simple_log.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="-5.851852">
+          <caret line="23" column="23" selection-start-line="23" selection-start-column="21" selection-end-line="23" selection-end-column="23" />
+          <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/PostGISHelpers.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="-11.666667">
-          <caret line="32" column="35" selection-start-line="32" selection-start-column="35" selection-end-line="32" selection-end-column="35" />
+        <state vertical-scroll-proportion="-5.126582">
+          <caret line="4" column="12" selection-start-line="4" selection-start-column="12" selection-end-line="4" selection-end-column="12" />
           <folding>
-            <element signature="e#16663#16801#0" expanded="false" />
-            <element signature="e#16714#16801#0" expanded="false" />
-            <element signature="e#16828#16970#0" expanded="false" />
-            <element signature="e#16879#16970#0" expanded="false" />
-            <element signature="e#17000#17142#0" expanded="false" />
-            <element signature="e#17051#17142#0" expanded="false" />
-            <element signature="e#17172#17284#0" expanded="false" />
-            <element signature="e#17228#17284#0" expanded="false" />
-            <element signature="e#17326#17434#0" expanded="false" />
-            <element signature="e#17377#17434#0" expanded="false" />
-            <element signature="e#17474#17581#0" expanded="false" />
-            <element signature="e#17525#17581#0" expanded="false" />
-            <element signature="e#17627#17734#0" expanded="false" />
-            <element signature="e#17678#17734#0" expanded="false" />
-            <element signature="e#17772#21089#0" expanded="false" />
-            <element signature="e#17936#18254#0" expanded="false" />
-            <element signature="e#18590#19686#0" expanded="false" />
-            <element signature="e#18590#19144#1" expanded="false" />
-            <element signature="e#19772#20199#0" expanded="false" />
-            <element signature="e#19772#19948#1" expanded="false" />
-            <element signature="e#20265#21089#0" expanded="false" />
-            <element signature="e#20265#20525#1" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/postgis_workspace.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.5988024">
-          <caret line="21" column="32" selection-start-line="21" selection-start-column="32" selection-end-line="21" selection-end-column="32" />
-          <folding>
-            <element signature="e#72#100#0" expanded="true" />
+            <element signature="e#922#1146#0" expanded="false" />
+            <element signature="e#3713#3825#0" expanded="false" />
+            <element signature="e#3713#3788#1" expanded="false" />
+            <element signature="e#3865#4310#0" expanded="false" />
+            <element signature="e#3865#3989#1" expanded="false" />
+            <element signature="e#4370#5016#0" expanded="false" />
+            <element signature="e#4370#4591#1" expanded="false" />
+            <element signature="e#5064#5388#1" expanded="false" />
+            <element signature="e#6502#7154#0" expanded="false" />
+            <element signature="e#6502#6623#1" expanded="false" />
+            <element signature="e#7219#8365#0" expanded="false" />
+            <element signature="e#7219#7467#1" expanded="false" />
+            <element signature="e#8412#10443#0" expanded="false" />
+            <element signature="e#8412#8703#1" expanded="false" />
+            <element signature="e#12238#14312#0" expanded="false" />
+            <element signature="e#12238#12559#1" expanded="false" />
+            <element signature="e#14378#14908#0" expanded="false" />
+            <element signature="e#14378#14607#1" expanded="false" />
+            <element signature="e#14954#16602#0" expanded="false" />
+            <element signature="e#14954#15040#1" expanded="false" />
+            <element signature="e#15091#15932#0" expanded="false" />
+            <element signature="e#15091#15194#1" expanded="false" />
+            <element signature="e#16630#16768#0" expanded="false" />
+            <element signature="e#16681#16768#0" expanded="false" />
+            <element signature="e#16795#16937#0" expanded="false" />
+            <element signature="e#16846#16937#0" expanded="false" />
+            <element signature="e#20045#20472#0" expanded="false" />
           </folding>
         </state>
       </provider>

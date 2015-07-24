@@ -1,4 +1,5 @@
-## Class used to cleanly handle database operations via psycopg2
+# Class used to cleanly handle database operations via psycopg2
+
 import psycopg2
 import keyring
 import datetime

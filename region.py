@@ -1,3 +1,5 @@
+# Class containing Region object for use with PostGIS helpers
+
 import fiona  # handling ESRI shape format
 from shapely.wkt import loads as loads
 from shapely.geometry import Polygon, box

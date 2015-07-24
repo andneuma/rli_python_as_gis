@@ -1,3 +1,4 @@
+"""
 from mpl_toolkits.basemap import Basemap
 from prettytable import PrettyTable
 import matplotlib.pyplot as plt
@@ -6,8 +7,6 @@ import numpy as np
 import fiona  # handling ESRI shape format
 from shapely.wkt import loads
 from shapely.geometry import mapping
-import logging
-
 from SQLOperations import *
 from region import *
 
@@ -21,28 +20,6 @@ class Query:
         self.results = []
         self.region = region
         self.geom_type = None
-
-        # Specify console logging
-        self._logger = logging.getLogger('logger')
-
-        self.console_handler.setFormatter(
-            logging.Formatter('%(levelname)s: %(message)s'))
-        self._logger.addHandler(logging.StreamHandler())
-        self.set_debug_level(debug_level)
-
-    def set_debug_level(self, value):
-        if value in (10, 'd', 'debug'):
-            self._logger.setLevel(10)
-        elif value in (20, 'i', 'info'):
-            self._logger.setLevel(20)
-        elif value in (30, 'w', 'warning'):
-            self._logger.setLevel(30)
-        elif value in (40, 'e', 'error'):
-            self._logger.setLevel(40)
-        elif value in (50, 'c', 'critical'):
-            self._logger.setLevel(50)
-        else:
-            self._logger.setLevel(0)
 
     def create_where_query(self,
                            relation,
@@ -69,7 +46,6 @@ class Query:
 
         # FROM/WHERE...
         # bbox of format (xmin, ymin, xmax, ymax)
-        if type(self.region.bounds) == tuple:
             # FROM...
             self._sql_query += " FROM {schema}.{relation}".format(
                 schema=schema,
@@ -77,11 +53,7 @@ class Query:
             if where_cond:
                 self._sql_query += " WHERE {where_cond} AND".format(
                     where_cond=where_cond)
-            self._sql_query += " ST_AsText(ST_Transform({geom},{SRID})) ".format(
-                geom=geom_col,
                 SRID=SRID)
-            self._sql_query += "&& ST_MakeEnvelope({},{},{},{})".format(
-                *self.region.bounds)
         # Link to DB relation
         elif type(self.region.bounds) == str:
             # FROM...
@@ -92,7 +64,6 @@ class Query:
             if where_cond:
                 self._sql_query += " WHERE {where_cond} AND".format(
                     where_cond=where_cond)
-            self._sql_query += " ST_Contains(clip_relation.geom, ST_Transform(way,{SRID}))".format(
                 SRID=SRID)
         # No clipping boundary
         else:
@@ -142,17 +113,13 @@ class Query:
                          'user': features[0]}
             return source_db
         except IndexError:
-            self._logger.error(
                 "Please provide DB access information as string 'user@host:port/db'")
 
     def fetch_geoms(self, source_db):
         """
         Fetches items from PostGIS DB and clips results to boundary of supplied
         Region object instance
-        :param source_db: DB to fetch data from
         """
-        self._logger.info(
-            "Querying DATABASE for {geoms}...(may take some time!)".format(
                 geoms=self.geom_type))
         ts = datetime.datetime.now()
 
@@ -166,7 +133,6 @@ class Query:
         min = int((td.seconds - sec) / 60)
 
         # Print number of fetched elements
-        self._logger.info(
             "Fetched {n} {geoms}(s) in {td_min}m:{td_sec}s\n".format(
                 n=len(view),
                 geoms=self.geom_type, td_min=min,
@@ -181,13 +147,8 @@ class Query:
             dictionary['geom'] = row[-1]
             self.results.append(dictionary)
 
-        # Clip features to polygon - if supplied
-        if self.region.boundary_polygon:
-            self.clip_view2poly()
-
     def print_results(self, n=1000):
         """
-        Print fetched results using PrettyTable
         :param n: Limit of result rows to display
         """
         try:
@@ -201,7 +162,6 @@ class Query:
                 print(t)
                 print("(List truncated to {x} elements)".format(x=n))
         except IndexError:
-            self._logger.warning("No Results to display!")
 
     def _get_vectors_from_postgis_map(self, bm, geom):
         """
@@ -240,8 +200,6 @@ class Query:
 
     def bbox_of_view(self, results):
         """
-        Create a bounding box out of query results where self.region.bounds = None
-        Protected method used by self.plot_view()
         :rtype : dict
         :param results: return dict of fetch_geoms(...)
         :return: bbox dict {'xmin':float, 'xmax':float, ...}
@@ -255,7 +213,6 @@ class Query:
                     'xmax': geom_bounds[2],
                     'ymax': geom_bounds[3]}
         except:
-            self._logger.warning("Error: Empty view, cannot plot any results!")
             return None
 
         for result in results:
@@ -279,7 +236,6 @@ class Query:
                     bbox['xmax'] = max(geom_shapely.exterior.xy[0])
                 if max(geom_shapely.exterior.xy[1]) > bbox['ymax']:
                     bbox['ymax'] = max(geom_shapely.exterior.xy[1])
-        return bbox
 
     def _prepare_plot(self, resolution="i"):
         """
@@ -290,21 +246,11 @@ class Query:
         :return: Basemap
         """
         # Determine bounding box if no clipping boundary was supplied
-        if not self.region.bounds:
             if isinstance(self, OSMCollection):
                 if hasattr(self, 'Points'):
-                    bbox = self.bbox_of_view(self.Points.results)
                 elif hasattr(self, 'Lines'):
-                    bbox = self.bbox_of_view(self.Lines.results)
                 elif hasattr(self, 'Polygons'):
-                    bbox = self.bbox_of_view(self.Polygons.results)
             else:
-                bbox = self.bbox_of_view(self.results)
-        else:
-            bbox = {'xmin': self.region.bounds[0],
-                    'ymin': self.region.bounds[1],
-                    'xmax': self.region.bounds[2],
-                    'ymax': self.region.bounds[3]}
 
         m = Basemap(resolution=resolution,
                     projection='merc',
@@ -362,13 +308,11 @@ class Query:
                 #     ax.add_collection(border)
 
         else:
-            self._logger.error("Error: >5000 elements to plot!")
 
         return ax
 
     def plot_view(self, resolution='i', el_limit=5000):
         """
-        Plot collected geometries
         :param resolution: Set basemap resolution / area threshold that shall
         still be displayed
         :param el_limit: Maximum number of elements to display on map
@@ -420,9 +364,7 @@ class Query:
                     output.write({
                         'properties': row['properties'],
                         'geometry': mapping(loads(row['geom']))})
-            self._logger.info("Saved file to {fp}".format(fp=filepath))
         else:
-            self._logger.warning("Nothing to save - empty view!")  ##
 
 
 class Points(Query):

@@ -1,0 +1,92 @@
+\hypertarget{class_post_g_i_s_helpers_1_1_o_s_m_collection}{}\section{Post\+G\+I\+S\+Helpers.\+O\+S\+M\+Collection Class Reference}
+\label{class_post_g_i_s_helpers_1_1_o_s_m_collection}\index{Post\+G\+I\+S\+Helpers.\+O\+S\+M\+Collection@{Post\+G\+I\+S\+Helpers.\+O\+S\+M\+Collection}}
+Inheritance diagram for Post\+G\+I\+S\+Helpers.\+O\+S\+M\+Collection\+:\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[height=3.000000cm]{class_post_g_i_s_helpers_1_1_o_s_m_collection}
+\end{center}
+\end{figure}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hypertarget{class_post_g_i_s_helpers_1_1_o_s_m_collection_a52bcf3a425fb5dd150a7c6c2efe0424b}{}def {\bfseries \+\_\+\+\_\+init\+\_\+\+\_\+}\label{class_post_g_i_s_helpers_1_1_o_s_m_collection_a52bcf3a425fb5dd150a7c6c2efe0424b}
+
+\item 
+def \hyperlink{class_post_g_i_s_helpers_1_1_o_s_m_collection_af97c78e59020dafe7f277b828adf8d6e}{create\+\_\+collection\+\_\+query}
+\item 
+def \hyperlink{class_post_g_i_s_helpers_1_1_o_s_m_collection_ae422d255640aa558aa826f4a30e8aeb1}{fetch\+\_\+\+O\+S\+M\+\_\+collection} (self, source\+\_\+db)
+\item 
+def \hyperlink{class_post_g_i_s_helpers_1_1_o_s_m_collection_ae505c01a43a32c63bba81f7b1424bc11}{plot\+\_\+view}
+\end{DoxyCompactItemize}
+\subsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\hypertarget{class_post_g_i_s_helpers_1_1_o_s_m_collection_a7f602b55a1c663ef35833377d674f613}{}{\bfseries Points}\label{class_post_g_i_s_helpers_1_1_o_s_m_collection_a7f602b55a1c663ef35833377d674f613}
+
+\item 
+\hypertarget{class_post_g_i_s_helpers_1_1_o_s_m_collection_a6fe91065cd9b09252963c2097227341c}{}{\bfseries Lines}\label{class_post_g_i_s_helpers_1_1_o_s_m_collection_a6fe91065cd9b09252963c2097227341c}
+
+\item 
+\hypertarget{class_post_g_i_s_helpers_1_1_o_s_m_collection_aac7591e4a09ba35e2e68fcf63bc761fa}{}{\bfseries Polygons}\label{class_post_g_i_s_helpers_1_1_o_s_m_collection_aac7591e4a09ba35e2e68fcf63bc761fa}
+
+\end{DoxyCompactItemize}
+\subsection*{Additional Inherited Members}
+
+
+\subsection{Member Function Documentation}
+\hypertarget{class_post_g_i_s_helpers_1_1_o_s_m_collection_af97c78e59020dafe7f277b828adf8d6e}{}\index{Post\+G\+I\+S\+Helpers\+::\+O\+S\+M\+Collection@{Post\+G\+I\+S\+Helpers\+::\+O\+S\+M\+Collection}!create\+\_\+collection\+\_\+query@{create\+\_\+collection\+\_\+query}}
+\index{create\+\_\+collection\+\_\+query@{create\+\_\+collection\+\_\+query}!Post\+G\+I\+S\+Helpers\+::\+O\+S\+M\+Collection@{Post\+G\+I\+S\+Helpers\+::\+O\+S\+M\+Collection}}
+\subsubsection[{create\+\_\+collection\+\_\+query}]{\setlength{\rightskip}{0pt plus 5cm}def Post\+G\+I\+S\+Helpers.\+O\+S\+M\+Collection.\+create\+\_\+collection\+\_\+query (
+\begin{DoxyParamCaption}
+\item[{}]{self, }
+\item[{}]{relation\+\_\+prefix, }
+\item[{}]{schema = {\ttfamily \char`\"{}public\char`\"{}}, }
+\item[{}]{select\+\_\+cols = {\ttfamily \char`\"{}$\ast$\char`\"{}}, }
+\item[{}]{geom\+\_\+col = {\ttfamily \textquotesingle{}way\textquotesingle{}}, }
+\item[{}]{where\+\_\+cond = {\ttfamily None}, }
+\item[{}]{S\+R\+I\+D = {\ttfamily 4326}}
+\end{DoxyParamCaption}
+)}\label{class_post_g_i_s_helpers_1_1_o_s_m_collection_af97c78e59020dafe7f277b828adf8d6e}
+\begin{DoxyVerb}Automatically generate and set a collective select/from/where SQL
+statement from given query features for a collection of OSMPoints and/or
+OSMLines and/or OSMPolygons
+:param schema: DB schema to query
+:param relation_prefix: OSM table name prefix (suffix is being added
+automatically)
+:param select_cols: Table columns to select from
+:param where_cond: Where condition for query
+:param geom_col: Column containing geometries
+:param SRID: Spatial Reference ID
+\end{DoxyVerb}
+ \hypertarget{class_post_g_i_s_helpers_1_1_o_s_m_collection_ae422d255640aa558aa826f4a30e8aeb1}{}\index{Post\+G\+I\+S\+Helpers\+::\+O\+S\+M\+Collection@{Post\+G\+I\+S\+Helpers\+::\+O\+S\+M\+Collection}!fetch\+\_\+\+O\+S\+M\+\_\+collection@{fetch\+\_\+\+O\+S\+M\+\_\+collection}}
+\index{fetch\+\_\+\+O\+S\+M\+\_\+collection@{fetch\+\_\+\+O\+S\+M\+\_\+collection}!Post\+G\+I\+S\+Helpers\+::\+O\+S\+M\+Collection@{Post\+G\+I\+S\+Helpers\+::\+O\+S\+M\+Collection}}
+\subsubsection[{fetch\+\_\+\+O\+S\+M\+\_\+collection(self, source\+\_\+db)}]{\setlength{\rightskip}{0pt plus 5cm}def Post\+G\+I\+S\+Helpers.\+O\+S\+M\+Collection.\+fetch\+\_\+\+O\+S\+M\+\_\+collection (
+\begin{DoxyParamCaption}
+\item[{}]{self, }
+\item[{}]{source\+\_\+db}
+\end{DoxyParamCaption}
+)}\label{class_post_g_i_s_helpers_1_1_o_s_m_collection_ae422d255640aa558aa826f4a30e8aeb1}
+\begin{DoxyVerb}Collectively fetch OSMCollection containing Points and/or Lines and/or
+Polygons
+:param source_db: DB to fetch data from
+:return:
+\end{DoxyVerb}
+ \hypertarget{class_post_g_i_s_helpers_1_1_o_s_m_collection_ae505c01a43a32c63bba81f7b1424bc11}{}\index{Post\+G\+I\+S\+Helpers\+::\+O\+S\+M\+Collection@{Post\+G\+I\+S\+Helpers\+::\+O\+S\+M\+Collection}!plot\+\_\+view@{plot\+\_\+view}}
+\index{plot\+\_\+view@{plot\+\_\+view}!Post\+G\+I\+S\+Helpers\+::\+O\+S\+M\+Collection@{Post\+G\+I\+S\+Helpers\+::\+O\+S\+M\+Collection}}
+\subsubsection[{plot\+\_\+view}]{\setlength{\rightskip}{0pt plus 5cm}def Post\+G\+I\+S\+Helpers.\+O\+S\+M\+Collection.\+plot\+\_\+view (
+\begin{DoxyParamCaption}
+\item[{}]{self, }
+\item[{}]{resolution = {\ttfamily \textquotesingle{}i\textquotesingle{}}, }
+\item[{}]{el\+\_\+limit = {\ttfamily 5000}}
+\end{DoxyParamCaption}
+)}\label{class_post_g_i_s_helpers_1_1_o_s_m_collection_ae505c01a43a32c63bba81f7b1424bc11}
+\begin{DoxyVerb}METHOD OVERRIDING: Plot collected geometries of OSMCollection
+:param resolution: Set basemap resolution / area threshold that shall
+still be displayed
+:param el_limit: Maximum number of elements to display on map
+\end{DoxyVerb}
+ 
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+/\+Users/blubber/\+Documents/\+Software\+Dev Workspace/\+Python/\+Projects/rli\+\_\+python\+\_\+as\+\_\+gis/Post\+G\+I\+S\+Helpers.\+py\end{DoxyCompactItemize}
